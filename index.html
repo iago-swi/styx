@@ -6,12 +6,12 @@
 <meta name="theme-color" content="#0c1013">
 <title>Styx</title>
 <style>
-  :root{--ink:#0c1013;--paper:#ecedea;--teal:#65e5d7;--gold:#ffe9b8}
+  :root{--ink:#0c1013;--paper:#ecedea;--teal:#65e5d7;--gold:#ffe9b8;--neon:#72c7ff}
   *{box-sizing:border-box}
   body{margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 16px;color:var(--paper);
     font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
     background:radial-gradient(ellipse at 50% 0%,#1b2a33 0%,#11181d 45%,var(--ink) 100%)}
-  main{width:100%;max-width:920px}
+  main{width:100%;max-width:1080px}
   h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(56px,12vw,120px);line-height:.9;margin:0 0 20px;letter-spacing:-.02em}
   p.lede{max-width:560px;font-size:18px;line-height:1.55;margin:0 0 34px;opacity:.9}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
@@ -19,12 +19,14 @@
     background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);transition:transform .15s,background .15s,border-color .15s}
   a.card:hover,a.card:focus-visible{transform:translateY(-3px);background:rgba(255,255,255,.09);border-color:var(--teal);outline:none}
   a.card.claude:hover,a.card.claude:focus-visible{border-color:var(--gold)}
+  a.card.gemini:hover,a.card.gemini:focus-visible{border-color:var(--neon)}
   .card img{display:block;width:100%;height:auto;aspect-ratio:8/5;object-fit:cover;border-radius:9px;margin-bottom:18px;
     border:1px solid rgba(255,255,255,.1);background:#05060d}
   .card h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:30px;margin:0 8px 6px}
   .card p{font-size:14px;line-height:1.5;margin:0 8px;opacity:.75}
   .tag{display:inline-block;margin:16px 8px 0;padding:5px 12px;border-radius:99px;font-size:13px;font-weight:600;background:var(--teal);color:var(--ink)}
   .claude .tag{background:var(--gold)}
+  .gemini .tag{background:var(--neon)}
   footer{margin-top:34px;font-size:13px;opacity:.6}
   footer a{color:var(--teal)}
 </style>
@@ -41,6 +43,10 @@
     <a class="card" href="ChatGPT/index.html">
       <img src="ChatGPT/screenshot.jpg" width="800" height="500" alt="Vector Arcade in play: a cut in progress on a teal-bordered field, with the pink Styx swirling over a nebula and a score panel on the right">
       <h2>Vector Arcade</h2><p>Built with ChatGPT. Vector graphics over a nebula backdrop.</p><span class="tag">Play Vector Arcade</span>
+    </a>
+    <a class="card gemini" href="Gemini/index.html">
+      <img src="Gemini/screenshot.jpg" width="800" height="500" alt="Neon Abyss in play: cyan, magenta, and solar gold hexagonal crystal panels around a warped nebula grid where the iridescent Styx swirls near an active tether">
+      <h2>Neon Abyss</h2><p>Built with Gemini. WebGL2 HDR bloom, procedural crystal realms and 8-way carving.</p><span class="tag">Play Neon Abyss</span>
     </a>
   </div>
   <footer>Personal fan project. Read the <a href="https://www.digger.org/styx/howplay.htm">original Styx instructions</a>.</footer>
