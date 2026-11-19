@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STYX // Neon Abyss</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Top Glassmorphic Arcade HUD -->
+    <header id="hud" aria-label="Game Status">
+      <div class="hud-group hud-brand">
+        <div class="brand-title">STYX</div>
+        <div class="level-pill">
+          <span class="pill-label">LVL</span>
+          <span id="hud-level" class="pill-value">01</span>
+          <span id="hud-realm" class="realm-name">ABYSSAL NEON</span>
+        </div>
+      </div>
+
+      <div class="hud-group hud-progress">
+        <div class="progress-header">
+          <span class="stat-label">TERRITORY</span>
+          <div class="progress-numbers">
+            <span id="hud-claimed" class="claimed-val">0.0%</span>
+            <span class="target-val">/ 80%</span>
+          </div>
+        </div>
+        <div class="progress-track">
+          <div id="hud-progress-fill" class="progress-fill"></div>
+          <div class="progress-target-marker" title="80% Target"></div>
+        </div>
+      </div>
+
+      <div class="hud-group hud-multiplier">
+        <div id="multiplier-badge" class="multiplier-badge mult-1">
+          <svg class="mult-ring" viewBox="0 0 44 44">
+            <circle class="mult-ring-bg" cx="22" cy="22" r="19" />
+            <circle id="mult-ring-arc" class="mult-ring-arc" cx="22" cy="22" r="19" />
+          </svg>
+          <span id="hud-mult" class="mult-text">×1</span>
+        </div>
+        <div class="mult-meta">
+          <span class="stat-label">BONUS</span>
+          <span id="hud-mult-name" class="mult-sub">PRISM</span>
+        </div>
+      </div>
+
+      <div class="hud-group hud-scores">
+        <div class="score-block">
+          <span class="stat-label">SCORE</span>
+          <span id="hud-score" class="score-value">000000</span>
+        </div>
+        <div class="score-block score-hi">
+          <span class="stat-label">HIGH</span>
+          <span id="hud-high" class="score-value hi-value">000000</span>
+        </div>
+      </div>
+
+      <div class="hud-group hud-controls">
+        <div id="hud-lives" class="lives-tray" aria-label="Lives"></div>
+        <div class="icon-actions">
+          <button id="btn-sound" class="icon-btn" title="Toggle Audio (M)" aria-label="Toggle Audio">
+            <svg id="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+            <svg id="icon-sound-off" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          </button>
+          <button id="btn-crt" class="icon-btn" title="Toggle Retro Scanlines (C)" aria-label="Toggle CRT Scanlines">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="4" width="20" height="14" rx="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="18" x2="12" y2="21"></line>
+              <line x1="5" y1="9" x2="19" y2="9" stroke-opacity="0.5"></line>
+              <line x1="5" y1="13" x2="19" y2="13" stroke-opacity="0.5"></line>
+            </svg>
+          </button>
+          <button id="btn-pause" class="icon-btn" title="Pause (P / Esc)" aria-label="Pause Game">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="6" y="4" width="4" height="16" rx="1"></rect>
+              <rect x="14" y="4" width="4" height="16" rx="1"></rect>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Playfield Stage -->
+    <main id="stage-wrapper">
+      <div id="stage-frame">
+        <canvas id="gl-canvas"></canvas>
+        <canvas id="ui-canvas"></canvas>
+
+        <!-- Dynamic Status Banner (e.g. FUSE LIT! / SPLIT!) -->
+        <div id="toast-banner" class="toast-banner hidden"></div>
+
+        <!-- TITLE OVERLAY -->
+        <section id="overlay-title" class="overlay visible">
+          <div class="overlay-card title-card">
+            <div class="title-eyebrow">1983 WINDMILL SOFTWARE HOMAGE // REIMAGINED</div>
+            <h1 class="hero-logo" data-text="STYX">STYX</h1>
+            <p class="hero-tagline">Carve luminous crystal across the neon abyss. Trap the writhing Styx. Outrun the perimeter crawlers.</p>
+
+            <div class="feature-grid">
+              <div class="feature-item">
+                <div class="feature-icon cyan">◆</div>
+                <div class="feature-copy">
+                  <strong>8-Way Carving</strong>
+                  <span>Use <kbd>Arrows</kbd> or <kbd>WASD</kbd> (diagonals supported). Hold <kbd>Shift</kbd> for precision speed.</span>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon gold">×10</div>
+                <div class="feature-copy">
+                  <strong>Time Your Multipliers</strong>
+                  <span>Close loops on <b class="c-cyan">×1</b>, <b class="c-mag">×5</b>, or <b class="c-gold">×10</b> to crystallize huge bonuses. Reach <b>80%</b> to advance.</span>
+                </div>
+              </div>
+              <div class="feature-item">
+                <div class="feature-icon crimson">⚡</div>
+                <div class="feature-copy">
+                  <strong>Survive the Abyss</strong>
+                  <span>Don't let the Styx touch your active tether, don't stall (Fuse!), and crush border caterpillars by sealing them in.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cta-row">
+              <button id="btn-start" class="btn-primary">
+                <span class="btn-glow"></span>
+                <span>ENTER THE ABYSS</span>
+                <kbd class="btn-kbd">SPACE</kbd>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- PAUSE OVERLAY -->
+        <section id="overlay-pause" class="overlay hidden">
+          <div class="overlay-card compact-card">
+            <div class="overlay-eyebrow">SYSTEM SUSPENDED</div>
+            <h2 class="overlay-heading">PAUSED</h2>
+            <div class="controls-mini">
+              <span><kbd>WASD</kbd> / <kbd>Arrows</kbd> Move (8-Way)</span>
+              <span><kbd>Shift</kbd> Precision Slow</span>
+              <span><kbd>M</kbd> Mute &nbsp;·&nbsp; <kbd>C</kbd> CRT Mode</span>
+            </div>
+            <div class="cta-row">
+              <button id="btn-resume" class="btn-primary">RESUME</button>
+              <button id="btn-restart-pause" class="btn-secondary">RESTART</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- LEVEL CLEAR OVERLAY -->
+        <section id="overlay-clear" class="overlay hidden">
+          <div class="overlay-card compact-card">
+            <div class="overlay-eyebrow">REALM CRYSTALLIZED</div>
+            <h2 id="clear-heading" class="overlay-heading gold-text">LEVEL 01 COMPLETE</h2>
+            <div class="summary-stats">
+              <div class="summary-row">
+                <span>Territory Claimed</span>
+                <strong id="clear-pct" class="c-cyan">84.2%</strong>
+              </div>
+              <div class="summary-row">
+                <span>Overclaim Bonus (&gt;80%)</span>
+                <strong id="clear-over-bonus" class="c-gold">+4,000</strong>
+              </div>
+              <div class="summary-row">
+                <span>Crawlers Crushed</span>
+                <strong id="clear-crushed" class="c-mag">0</strong>
+              </div>
+              <div class="summary-divider"></div>
+              <div class="summary-row total-row">
+                <span>Total Score</span>
+                <strong id="clear-total">12,500</strong>
+              </div>
+            </div>
+            <div class="cta-row">
+              <button id="btn-next-level" class="btn-primary">
+                <span>NEXT REALM</span>
+                <kbd class="btn-kbd">SPACE</kbd>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- GAME OVER OVERLAY -->
+        <section id="overlay-gameover" class="overlay hidden">
+          <div class="overlay-card compact-card">
+            <div id="gameover-badge" class="overlay-eyebrow">SIGNAL LOST</div>
+            <h2 class="overlay-heading crimson-text">GAME OVER</h2>
+            <div class="summary-stats">
+              <div class="summary-row">
+                <span>Final Score</span>
+                <strong id="go-score" class="c-gold">0</strong>
+              </div>
+              <div class="summary-row">
+                <span>High Score</span>
+                <strong id="go-high" class="c-cyan">0</strong>
+              </div>
+              <div class="summary-row">
+                <span>Realm Reached</span>
+                <strong id="go-level">LVL 01</strong>
+              </div>
+            </div>
+            <div class="cta-row">
+              <button id="btn-retry" class="btn-primary">
+                <span>PLAY AGAIN</span>
+                <kbd class="btn-kbd">SPACE</kbd>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Subtle Bottom Key Hint Bar -->
+    <footer id="footer-bar">
+      <div class="footer-hints">
+        <span><kbd>WASD</kbd> / <kbd>↑↓←→</kbd> 8-Way Move</span>
+        <span class="dot">•</span>
+        <span><kbd>SHIFT</kbd> Precision</span>
+        <span class="dot">•</span>
+        <span><kbd>P</kbd> Pause</span>
+        <span class="dot">•</span>
+        <span><kbd>C</kbd> CRT Glow</span>
+        <span class="dot">•</span>
+        <span><kbd>M</kbd> Synth Audio</span>
+      </div>
+      <div id="fps-badge" class="footer-status">WEBGL2 HDR BLOOM</div>
+    </footer>
+  </div>
+
+  <!-- Scripts loaded in clean dependency order (works both via file:// and HTTP) -->
+  <script defer src="src/themes.js"></script>
+  <script defer src="src/audio.js"></script>
+  <script defer src="src/grid.js"></script>
+  <script defer src="src/entities.js"></script>
+  <script defer src="src/renderer.js"></script>
+  <script defer src="src/game.js"></script>
+  <script defer src="src/main.js"></script>
+</body>
+</html>
