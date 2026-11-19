@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0d1114">
+  <title>STYX · Vector Arcade</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230e1417'/%3E%3Cpath d='M5 25 13 7h5l-8 18zm10 0 8-18h5l-8 18z' fill='%23ff8054'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
+</head>
+<body>
+<svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+  <symbol id="volume" viewBox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zM15 8q5 4 0 8m3-11q8 7 0 14"/></symbol>
+  <symbol id="mute" viewBox="0 0 24 24"><path d="M3 9h4l5-4v14l-5-4H3zM16 9l6 6m0-6-6 6"/></symbol>
+  <symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.6 2.6 0 0 1 5 .8c0 1.9-2.5 2-2.5 4m0 2.2v.4"/></symbol>
+  <symbol id="scope" viewBox="0 0 24 24"><path d="M3 9V3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6m5-3h8m-4-4v8"/></symbol>
+  <symbol id="expand" viewBox="0 0 24 24"><path d="M3 9V3h6m6 0h6v6m0 6v6h-6m-6 0H3v-6"/></symbol>
+  <symbol id="trophy" viewBox="0 0 24 24"><path d="M7 4h10v4q0 7-5 7T7 8zm0 2H3v2q0 4 5 4m9-6h4v2q0 4-5 4m-4 3v4m-5 1h10"/></symbol>
+  <symbol id="ship" viewBox="0 0 24 24"><path d="M12 2 22 21l-10-5-10 5z" fill="currentColor" stroke="none"/><path d="m12 7-1 7 5 2" stroke="#203738" stroke-width="1.4"/></symbol>
+  <symbol id="keys" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M5 9h2m2 0h2m2 0h2m2 0h2M5 12.5h2m2 0h2m2 0h2m2 0h2M7 16h10"/></symbol>
+  <symbol id="signal" viewBox="0 0 24 24"><path d="M1 12h5l3-8 4 16 3-11 2 3h5"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="restart" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></symbol>
+</defs></svg>
+<main class="console">
+  <header class="masthead">
+    <div class="brand" aria-label="Styx Vector Arcade">
+      <svg class="wordmark" viewBox="0 0 228 65" role="img" aria-label="STYX"><g fill="currentColor" transform="skewX(-13) translate(15 0)">
+        <path d="M5 3h49l-2 11H16v8h31l6 6v20l-9 11H0l2-12h36v-9H9l-7-7V11z"/>
+        <path d="M58 3h54v12H92v44H77V15H56zM113 3h17l13 20 14-20h17l-25 34v22h-15V37zM171 3h17l10 16 11-16h17l-21 28 19 28h-18l-10-16-12 16h-18l22-29z"/>
+      </g></svg>
+      <span class="brand-type">VECTOR<br>ARCADE</span>
+    </div>
+    <nav aria-label="Game options">
+      <button id="sound" class="tool"><svg><use href="#volume"/></svg><span>Sound on</span></button>
+      <button id="guide" class="tool"><svg><use href="#help"/></svg><span>How to play</span></button>
+    </nav>
+  </header>
+  <div class="layout">
+    <section class="field panel" id="field" aria-label="Game field">
+      <header class="field-head"><div><svg class="accent"><use href="#scope"/></svg><strong>Sector <span id="sector">01</span></strong><i></i><span id="sectorName">Outer Drift</span></div><span class="status"><b></b><span id="status">Standby</span></span></header>
+      <div class="arena"><canvas id="arena" tabindex="0" aria-label="Styx arcade playfield. Use arrow keys or WASD to move."></canvas><div id="notice" role="status"></div>
+        <div class="overlay" id="overlay" hidden><div><small id="overlayTag"></small><h1 id="overlayTitle"></h1><p id="overlayCopy"></p><button id="overlayAction" class="primary"></button><button id="restartRun" class="text-button" hidden>Restart run</button></div></div>
+      </div>
+      <footer class="field-foot"><span class="coords"><svg><use href="#scope"/></svg><span id="coord">X 000 &nbsp; Y 000</span></span><span class="time"><svg><use href="#clock"/></svg><span id="time">00:00</span></span><button id="full" class="icon-button" aria-label="Expand playfield" title="Expand playfield"><svg><use href="#expand"/></svg></button></footer>
+    </section>
+    <aside class="side">
+      <section class="telemetry panel"><h2 class="panel-heading"><svg><use href="#signal"/></svg>Run telemetry</h2>
+        <div class="readouts"><div class="label">Score</div><div id="score" class="score">000000</div><div class="best"><svg><use href="#trophy"/></svg>Best <span id="best">000000</span></div>
+          <div class="divider"></div>
+          <div class="label">Territory</div><div class="territory-value"><span id="pct">0</span><small>%</small><span class="goal">/ 80% goal</span></div>
+          <div class="meter" role="progressbar" aria-label="Territory claimed" aria-valuemin="0" aria-valuemax="80"><i id="meter"></i></div>
+          <div class="divider"></div>
+          <div class="lives-row"><span class="label">Lives</span><span id="lives" aria-label="3 lives"></span></div>
+        </div>
+        <button id="action" class="primary"><span id="actionIcon">▶</span><span id="actionText">Start game</span><kbd id="actionKey">Enter</kbd></button>
+      </section>
+      <section class="legend panel"><h2 class="panel-heading">Field guide</h2><div class="guide-grid">
+        <span><i class="player-mark"></i>You</span><span><i class="styx-mark">∿</i>Styx</span>
+        <span><i class="claim-mark"></i>Claimed</span><span><i class="worm-mark">•••</i>Crawler</span>
+      </div></section>
+    </aside>
+  </div>
+  <div class="touch" aria-label="Touch movement controls"><button data-dir="left" aria-label="Move left">←</button><button data-dir="up" aria-label="Move up">↑</button><button data-dir="down" aria-label="Move down">↓</button><button data-dir="right" aria-label="Move right">→</button></div>
+  <footer class="control-bar"><strong><svg><use href="#keys"/></svg>Controls</strong><span class="keygroup"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><em>/</em><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd><span>Move &amp; draw</span></span><span class="keygroup"><kbd>Space</kbd><span>Pause</span></span><span class="keygroup"><kbd>M</kbd><span>Sound</span></span></footer>
+</main>
+<dialog id="instructions"><div class="dialog-head"><span class="label">Field manual</span><button id="close" class="icon-button" aria-label="Close instructions">×</button></div><h1>How to play</h1><p>Claim 80% of the field to clear a sector.</p><ol><li><strong>Leave safe ground.</strong> Use arrow keys or WASD to steer the white diamond. On touchscreens, swipe or use the direction pad.</li><li><strong>Close the line.</strong> Crossing open space draws a trail. Reach cyan territory or the border to claim the area cut off from the Styx.</li><li><strong>Protect your trail.</strong> The Styx can cut any exposed line. Avoid crossing your own trail, and watch for gold crawlers along the edges.</li></ol><button id="gotIt" class="primary">Got it</button></dialog>
+</body></html>
