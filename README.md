@@ -19,6 +19,14 @@ To play offline, download or clone this repository and open `index.html` in your
 
 ![Vector Arcade gameplay: a cut in progress on a teal-bordered field, with the pink Styx swirling over a nebula and a score panel on the right](ChatGPT/screenshot.jpg)
 
+## Game history
+
+In 1981, Taito released *Qix* in arcades. To claim part of the screen, you had to leave its edge, draw a line through open space, and reach safety before the Qix touched the line. A cut across the entire screen could win a huge area, but it also gave the enemy longer to intercept you. [Taito’s original arcade flyer](https://flyers.arcade-museum.com/arcades/show/794) · [Museum of the Game](https://www.arcade-museum.com/Videogame/qix)
+
+In 1983, Windmill Software released *Styx* for the IBM PC/XT on a bootable 5¼-inch floppy disk. Its take on the idea allowed diagonal cuts and set the target at 80% of the field. Timing mattered as much as size for a high score. A cycling color indicator made the same patch of territory worth one, five, or ten times its base value. [Styx archive](https://www.digger.org/styx/) · [Original controls and scoring](https://www.digger.org/styx/howplay.htm)
+
+The original depended on IBM’s Color Graphics Adapter (CGA). In 1998, Andrew Jenner made a version that ran on PCs with newer graphics hardware. The two browser games in this repository revisit the same territory-cutting mechanic, one in stained glass and the other over a nebula. [Styx archive’s account of the 1998 version](https://www.digger.org/styx/)
+
 ## Structure
 
 ```text
@@ -28,5 +36,3 @@ styx/
 |-- index.html # shared landing page
 `-- README.md
 ```
-
-Read the [original Styx instructions](https://www.digger.org/styx/howplay.htm).
