@@ -1,14 +1,45 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0c1013">
-  <meta http-equiv="refresh" content="0; url=ChatGPT/index.html">
-  <title>Styx</title>
-  <style>body{background:#0c1013;color:#ecedea;font-family:system-ui,sans-serif}a{color:#65e5d7}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c1013">
+<title>Styx</title>
+<style>
+  :root{--ink:#0c1013;--paper:#ecedea;--teal:#65e5d7;--gold:#ffe9b8}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;padding:32px 16px;color:var(--paper);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:radial-gradient(ellipse at 50% 0%,#1b2a33 0%,#11181d 45%,var(--ink) 100%)}
+  main{width:100%;max-width:760px}
+  h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(56px,12vw,120px);line-height:.9;margin:0 0 20px;letter-spacing:-.02em}
+  p.lede{max-width:560px;font-size:18px;line-height:1.55;margin:0 0 34px;opacity:.9}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  a.card{display:block;padding:22px 22px 24px;border-radius:18px;text-decoration:none;color:inherit;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);transition:transform .15s,background .15s,border-color .15s}
+  a.card:hover,a.card:focus-visible{transform:translateY(-3px);background:rgba(255,255,255,.09);border-color:var(--teal);outline:none}
+  a.card.claude:hover,a.card.claude:focus-visible{border-color:var(--gold)}
+  .card h2{font-family:Georgia,serif;font-style:italic;font-weight:400;font-size:30px;margin:0 0 6px}
+  .card p{font-size:14px;line-height:1.5;margin:0;opacity:.75}
+  .tag{display:inline-block;margin-top:16px;padding:5px 12px;border-radius:99px;font-size:13px;font-weight:600;background:var(--teal);color:var(--ink)}
+  .claude .tag{background:var(--gold)}
+  footer{margin-top:34px;font-size:13px;opacity:.6}
+  footer a{color:var(--teal)}
+</style>
 </head>
 <body>
-  <p><a href="ChatGPT/index.html">Play STYX · Vector Arcade</a></p>
+<main>
+  <h1>Styx</h1>
+  <p class="lede">A territory-capture arcade game inspired by Styx and Qix. Cut lines across the field, seal off regions and trap the roaming enemy. Each version below was built by a different AI assistant from the same brief.</p>
+  <div class="grid">
+    <a class="card claude" href="Claude/index.html">
+      <h2>Vitrail</h2><p>Built with Claude. Every region you seal becomes a pane of stained glass.</p><span class="tag">Play Vitrail</span>
+    </a>
+    <a class="card" href="ChatGPT/index.html">
+      <h2>Vector Arcade</h2><p>Built with ChatGPT. Vector graphics over a nebula backdrop.</p><span class="tag">Play Vector Arcade</span>
+    </a>
+  </div>
+  <footer>Personal fan project. Read the <a href="https://www.digger.org/styx/howplay.htm">original Styx instructions</a>.</footer>
+</main>
 </body>
 </html>
