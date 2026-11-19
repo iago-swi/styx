@@ -1,5 +1,7 @@
 # STYX · Vector Arcade
 
+![Vector Arcade gameplay: a cut in progress on a teal-bordered field, with the pink Styx swirling over a nebula and a score panel on the right](screenshot.jpg)
+
 Open `index.html` in a browser to play offline. All game code, sounds, and artwork run locally. No installation or build step is required.
 
 Press **Enter** to start. Steer the white diamond with **WASD** or the **arrow keys**. Each turn sets your direction until you turn again, reach the edge, or close a trail. On a touchscreen, swipe across the field or use the direction buttons.
