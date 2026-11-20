@@ -30,7 +30,7 @@ Light 75% of the window to finish it (78% from window 3, 80% from window 5).
 | `P` or `Esc` | Pause |
 | `M` | Sound on/off |
 | `F` | Full screen |
-| `Enter` | Start |
+| `Enter` or `Space` | Start |
 
 On a touch screen, swipe to steer and tap to stop.
 
@@ -40,7 +40,8 @@ On a touch screen, swipe to steer and tap to stop.
 | Cinders | Run along the lines and hunt you. Touching one costs a diamond. If one reaches the start of your open cut, the cut catches fire and the flame chases you. |
 | Boxing yourself in | A cut cannot cross itself. With no way out, you lose a diamond. |
 
-You have three diamonds. Larger panes score more than several small ones. From
+You have three diamonds. One large pane scores more than several small panes
+covering the same area. From
 window 4 there are two Wisps; separate them with a cut and the window is finished
 at once. The best score is kept in the browser.
 
@@ -51,7 +52,7 @@ at once. The best score is kept in the browser.
 | | |
 | --- | --- |
 | Delivery | One `index.html` of about 970 lines (64 KB): markup, CSS, JavaScript and GLSL together. No dependencies, no build step. |
-| Language | Plain JavaScript (ES2020) in a single closure, no framework. |
+| Language | Plain JavaScript in a single closure, no framework. |
 | Rendering | WebGL 2 (GLSL ES 3.00) for the scene and post-processing, Canvas 2D for lines, creatures and sparks, HTML and CSS for the score bar and screens. |
 | Sound | Web Audio API. Every sound is synthesised; there are no audio files. |
 | Type | Bodoni Moda and Instrument Sans from Google Fonts, with system fallbacks. |
@@ -71,8 +72,8 @@ A cell is in one of four states: dark, line, glass, or open cut.
 Sealing a cut works like this:
 
 1. The open cut becomes line.
-2. A 4-connected flood fill starts from each Wisp (iterative, with a preallocated
-   `Int32Array` stack, so there is no recursion and no allocation).
+2. A 4-connected flood fill starts from the dark cell nearest each Wisp. It is
+   iterative and uses a preallocated `Int32Array` stack, so there is no recursion.
 3. Every dark cell the fill did not reach becomes glass and gets the next pane colour.
 4. Every line cell with no dark cell among its eight neighbours stops being a live
    line and becomes lead between panes.
@@ -93,14 +94,14 @@ Each frame runs these passes:
    uploaded as a texture.
 3. **Scene shader.** One full-screen fragment shader reads the mask and paints the
    dark, the glass and the lead, then adds the light layer.
-4. **Bloom.** A threshold pass (0.62) followed by five downsample and four upsample
-   passes in the dual-filter style.
+4. **Bloom.** Five downsample passes, the first with a brightness threshold of 0.62,
+   then four upsample passes in the dual-filter style.
 5. **Final grade.** Up to four shockwave distortions, chromatic aberration, ACES tone
    mapping, a vignette and film grain.
 
 The mask is sampled twice. Bilinear filtering turns the blocky fill, flash and lead
-channels into smooth edges, and the edge of a pane is the 0.5 contour, which runs
-exactly through the centre of its border line. The colour index is read unfiltered
+channels into smooth edges, and the edge of a pane starts at the 0.5 contour, which
+runs through the centre of its border line. The colour index is read unfiltered
 with `texelFetch`, so colours never blend across a lead line.
 
 A new pane is not shown at once: each cell gets a reveal time proportional to its
@@ -154,19 +155,21 @@ The five colour themes (Rosace, Aube, Abysse, Braise, Givre) repeat from window 
 A drone of six detuned oscillators runs through a low-pass filter swept by a slow LFO,
 with a feedback delay (0.34 s) as reverb. Bells are a sine fundamental with two
 inharmonic partials (2.756 and 5.404 times the fundamental), which gives the struck
-glass tone. Notes come from a pentatonic scale on a root that changes with the theme.
+glass tone. Bell notes come from a minor pentatonic scale on a root that changes with
+the theme; only the shatter when you lose a diamond uses random high pitches.
 An open cut sounds a tone that rises with its length.
 
 ### Accessibility and behaviour
 
 - With `prefers-reduced-motion`, screen shake, shockwaves, the chromatic flash and
   the title animation are switched off.
-- The game pauses when the tab is hidden.
+- A game in progress pauses when the tab is hidden.
 - Touch input: a swipe sets the direction, a tap stops.
 
 ### Testing
 
-`window.__vitrail` exposes the game state and a `step(dt)` function that advances the
+`window.__vitrail` exposes part of the game state (score, diamonds, share lit, cutter,
+Wisps, Cinders), simulated key presses, and a `step(dt)` function that advances the
 simulation by a fixed time step. The game was checked with scripted runs through this
 hook (cutting, sealing, level change, fuse, Wisp hit, game over) rather than by timed
 play, so frame rate on slower graphics hardware has not been measured.
