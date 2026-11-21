@@ -38,13 +38,28 @@ In 1983, Windmill Software released *Styx* for the IBM PC/XT on a bootable 5¼-i
 
 The original depended on IBM’s Color Graphics Adapter (CGA). In 1998, Andrew Jenner made a version that ran on PCs with newer graphics hardware. The three browser games in this repository revisit the same territory-cutting mechanic—in stained glass, vector arcade, and WebGL2 neon crystal. [Styx archive’s account of the 1998 version](https://www.digger.org/styx/)
 
+## Versions and release notes
+
+Each game has its own version number. Every change is recorded in the game's changelog and published as a release with the same notes: [all releases](https://github.com/iago-swi/styx/releases).
+
+| Game | Changelog | Tags |
+| --- | --- | --- |
+| Vitrail | [Claude/CHANGELOG.md](Claude/CHANGELOG.md) | `claude-vX.Y.Z` |
+| Vector Arcade | [ChatGPT/CHANGELOG.md](ChatGPT/CHANGELOG.md) | `chatgpt-vX.Y.Z` |
+| Neon Abyss | [Gemini/CHANGELOG.md](Gemini/CHANGELOG.md) | `gemini-vX.Y.Z` |
+
+[RELEASING.md](RELEASING.md) explains how a version is numbered and published.
+
 ## Structure
 
 ```text
 styx/
-|-- Claude/    # version built with Claude
-|-- ChatGPT/   # version built with ChatGPT
-|-- Gemini/    # version built with Gemini
-|-- index.html # shared landing page
-`-- README.md
+|-- Claude/       # version built with Claude
+|-- ChatGPT/      # version built with ChatGPT
+|-- Gemini/       # version built with Gemini
+|-- .github/      # workflow that publishes a release when a version tag is pushed
+|-- index.html    # shared landing page
+|-- README.md
+|-- RELEASING.md  # how versions and release notes work
+`-- AGENTS.md     # instructions for AI assistants (CLAUDE.md and GEMINI.md point to it)
 ```

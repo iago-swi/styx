@@ -8,7 +8,7 @@ The whole game is one file, `index.html`. Graphics and sound are generated in th
 browser (WebGL 2 and Web Audio); there are no image or audio files. The ten best
 scores are kept on your device, and a second list is shared between all players.
 
-**[Play it in your browser](https://iago-swi.github.io/styx/Claude/)**
+**[Play it in your browser](https://iago-swi.github.io/styx/Claude/)** · [What changed in each version](CHANGELOG.md)
 
 ![Vitrail gameplay: seven sealed panes of red, blue, yellow, green and violet glass around a dark area where the Wisp drifts](screenshot.jpg)
 

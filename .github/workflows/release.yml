@@ -1,0 +1,82 @@
+# Publishes a GitHub release for a version tag, using the matching section of the
+# changelog as release notes. See RELEASING.md.
+#
+#   claude-v1.2.0  ->  Claude/CHANGELOG.md, section "## [1.2.0]"
+#   v1.2.0         ->  CHANGELOG.md at the repository root
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]*'
+      - '*-v[0-9]*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to publish or refresh, for example claude-v1.2.0'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Publish the release notes from the changelog
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+
+          # Split the tag into an optional folder prefix and the version.
+          [[ "$TAG" =~ ^(([a-z0-9]+)-)?v([0-9]+\.[0-9]+\.[0-9]+)$ ]] \
+            || fail "Tag '$TAG' is neither vX.Y.Z nor <folder>-vX.Y.Z"
+          prefix="${BASH_REMATCH[2]}"
+          version="${BASH_REMATCH[3]}"
+
+          # The prefix names a folder, whatever its capitals: chatgpt -> ChatGPT.
+          log="CHANGELOG.md"
+          if [[ -n "$prefix" ]]; then
+            folder="$(find . -mindepth 1 -maxdepth 1 -type d -iname "$prefix" -printf '%f\n' | head -n 1)"
+            [[ -n "$folder" ]] || fail "No folder matches the tag prefix '$prefix'"
+            log="$folder/CHANGELOG.md"
+          fi
+          [[ -f "$log" ]] || fail "$log does not exist"
+
+          # Notes: everything under "## [version]" up to the next "## " heading,
+          # without the link definitions kept at the bottom of the file.
+          awk -v v="$version" '
+            /^## /          { on = (index($0, "## [" v "]") == 1); next }
+            /^\[[^]]+\]: /  { next }
+            on              { print }
+          ' "$log" | sed -e '/./,$!d' > notes.md
+          grep -q '[^[:space:]]' notes.md || fail "$log has no section '## [$version]'"
+
+          # A game that declares its version must declare the one being released.
+          # Only checked for a pushed tag, where the files are those of the tagged commit.
+          page="${folder:-.}/index.html"
+          if [[ "$GITHUB_EVENT_NAME" == "push" && -f "$page" ]]; then
+            shown="$(grep -o -m 1 -E '<meta name="version" content="[^"]*"' "$page" | sed -E 's/.*content="([^"]*)"/\1/' || true)"
+            if [[ -n "$shown" && "$shown" != "$version" ]]; then
+              fail "$page declares version $shown, but the tag says $version"
+            fi
+          fi
+
+          # Title: the name in the first heading ("# Vitrail changelog"), then the version.
+          name="$(grep -m 1 '^# ' "$log" | sed -E 's/^# +//; s/ +changelog$//I' || true)"
+          if [[ -z "$name" || "${name,,}" == "changelog" ]]; then name="${GITHUB_REPOSITORY#*/}"; fi
+          title="$name $version"
+
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release edit "$TAG" --title "$title" --notes-file notes.md
+            echo "Updated the notes of $title"
+          else
+            gh release create "$TAG" --verify-tag --title "$title" --notes-file notes.md
+            echo "Published $title"
+          fi
