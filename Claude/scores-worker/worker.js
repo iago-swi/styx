@@ -17,8 +17,7 @@ const PER_MINUTE = 30;   // new entries accepted per minute, all players togethe
 // A browser game cannot prove its score, so the list only refuses what the rules make impossible.
 // These figures mirror ../index.html. A pane that lights g percent of window n scores
 // (80 g + 6 g²) × (1 + 0.25 (n − 1)), rounded to ten. Finishing window n adds 1000 n, plus 500 for each
-// percentage point above the target (75, then 78 from window 3 and 80 from window 5), plus 5000 for
-// parting the two Wisps (from window 4), rounded to ten as well.
+// percentage point above the target (75, then 78 from window 3 and 80 from window 5), rounded to ten as well.
 //   Highest: one pane of the whole window (68,000 × the window factor; several panes always score less)
 //            with every bonus, and 2,000 of slack for the rounding of many small panes.
 //   Lowest:  a run that ended in window w finished the w − 1 windows before it, and each of those paid
@@ -27,7 +26,7 @@ function vitrailRange(w) {
   let min = 0, max = 0;
   for (let n = 1; n <= w; n++) {
     const goal = n < 3 ? 75 : n < 5 ? 78 : 80;
-    max += 68000 * (1 + 0.25 * (n - 1)) + 2000 + 1000 * n + 500 * (100 - goal) + (n >= 4 ? 5000 : 0);
+    max += 68000 * (1 + 0.25 * (n - 1)) + 2000 + 1000 * n + 500 * (100 - goal);
     if (n < w) min += 1000 * n;
   }
   return [min, max];

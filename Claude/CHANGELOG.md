@@ -2,6 +2,17 @@
 
 Changes to Vitrail, the Claude version of Styx, newest first. Each version is tagged `claude-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
+## [1.1.2] - 2026-11-21
+
+### Fixed
+
+- Parting the two Wisps with a cut no longer finishes the window. From window 4, one straight cut between them ended the window at once and paid a 5'000-point bonus, which made the later windows easier than the first ones and the score unlimited. The cut now simply stands: each Wisp stays on its side and the window still needs 78% or 80% of light.
+
+### Changed
+
+- The Wisps keep getting more dangerous: dashes aim at an open cut more often up to window 6, and the rests between dashes shorten from window 4 to window 11.
+- The shared list accepts a slightly lower highest score per window, since the parting bonus is gone. Scores already on the list stay.
+
 ## [1.1.1] - 2026-11-21
 
 ### Changed
@@ -35,6 +46,7 @@ First release.
 - Keyboard controls (arrow keys or `WASD`, pause, sound, full screen) and swipe controls on touch screens.
 - Graphics and sound generated in the browser with WebGL 2 and Web Audio. The whole game is one file, `index.html`.
 
+[1.1.2]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.2
 [1.1.1]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.1
 [1.1.0]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.0
 [1.0.0]: https://github.com/iago-swi/styx/releases/tag/claude-v1.0.0

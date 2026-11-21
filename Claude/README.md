@@ -45,8 +45,8 @@ On a touch screen, swipe to steer and tap to stop.
 
 You have three diamonds. One large pane scores more than several small panes
 covering the same area. From
-window 4 there are two Wisps; separate them with a cut and the window is finished
-at once.
+window 4 there are two Wisps. A cut between them keeps each on its own side, and the
+window still needs its full share of light.
 
 When a game ends, "Cut again" starts the next one and "Title screen" leads back to
 the opening screen. A paused game can be given up with "End this run": it ends like
@@ -94,8 +94,8 @@ Sealing a cut works like this:
 3. Every dark cell the fill did not reach becomes glass and gets the next pane colour.
 4. Every line cell with no dark cell among its eight neighbours stops being a live
    line and becomes lead between panes.
-5. With two Wisps, if the fill from the first does not reach the second, they have
-   been separated and the window is finished.
+5. With two Wisps, the fill starts from both. A cut that parts them lights nothing:
+   both sides stay dark, each with its Wisp.
 
 Cinders that end up on a dead line are moved to the nearest live one.
 
@@ -142,7 +142,8 @@ The render resolution follows the device pixel ratio up to 2 and is capped at
 - **Wisp.** A wandering heading with random turn rate and speed, bounced off lines and
   glass by a circle-against-grid test, in sub-steps of at most 0.45 cells. A dash has
   three phases: a 0.6 s warning, 0.5 to 0.85 s at 2.3 times base speed, then 3.5 to
-  8 s of rest. While you are cutting, a dash may aim at you. The seven tendrils are
+  8 s of rest, which shortens in later windows. While you are cutting, a dash may aim
+  at you. The seven tendrils are
   chains of 15 points that follow their leader at a fixed spacing; any point touching
   an open cut counts as a hit.
 - **Cinders.** They walk the graph of live lines. Every 2.5 to 5.5 s a Cinder may run
@@ -157,13 +158,15 @@ The render resolution follows the device pixel ratio up to 2 and is capped at
 | Share to light | 75% | 78% from window 3, 80% from window 5 |
 | Wisps | 1 | 2 from window 4 |
 | Wisp base speed (cells per second) | 21.6 | +2.6 |
+| Chance that a dash aims at an open cut | 45% | +10 points, 95% from window 6 |
+| Rest between dashes | 3.5 to 8 s | 7% shorter per window from window 4, down to 45% of that from window 11 |
 | Cinders | 1 | 2 from window 2, 3 from window 4, 4 from window 6 |
 | Cinder speed (steps per second) | 12.8 | +1.3 |
 
 A pane that lights *g* percent of the window scores (80 *g* + 6 *g*²) × (1 + 0.25 ×
 (window − 1)), rounded to ten, so one large pane beats several small ones. Finishing a
-window adds 1000 × window, plus 500 per percentage point above the target, plus 5000
-for separating two Wisps.
+window adds 1000 × window, plus 500 per percentage point above the target. Parting two
+Wisps pays nothing.
 
 The five colour themes (Rosace, Aube, Abysse, Braise, Givre) repeat from window 6.
 
