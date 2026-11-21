@@ -7,6 +7,7 @@
   <title>STYX · Vector Arcade</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230e1417'/%3E%3Cpath d='M5 25 13 7h5l-8 18zm10 0 8-18h5l-8 18z' fill='%23ff8054'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
+  <script src="scores.js" defer></script>
   <script src="game.js" defer></script>
 </head>
 <body>
@@ -47,7 +48,7 @@
     </section>
     <aside class="side">
       <section class="telemetry panel"><h2 class="panel-heading"><svg><use href="#signal"/></svg>Run telemetry</h2>
-        <div class="readouts"><div class="label">Score</div><div id="score" class="score">000000</div><div class="best"><svg><use href="#trophy"/></svg>Best <span id="best">000000</span></div>
+        <div class="readouts"><div class="label">Score</div><div id="score" class="score">000000</div><div class="best"><svg><use href="#trophy"/></svg><button id="score-open">High scores</button><span id="best-label" hidden>Best</span> <span id="best">000000</span></div>
           <div class="divider"></div>
           <div class="label">Territory</div><div class="territory-value"><span id="pct">0</span><small>%</small><span class="goal">/ 80% goal</span></div>
           <div class="meter" role="progressbar" aria-label="Territory claimed" aria-valuemin="0" aria-valuemax="80"><i id="meter"></i></div>
@@ -66,4 +67,17 @@
   <footer class="control-bar"><strong><svg><use href="#keys"/></svg>Controls</strong><span class="keygroup"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><em>/</em><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd><span>Move &amp; draw</span></span><span class="keygroup"><kbd>Space</kbd><span>Pause</span></span><span class="keygroup"><kbd>M</kbd><span>Sound</span></span></footer>
 </main>
 <dialog id="instructions"><div class="dialog-head"><span class="label">Field manual</span><button id="close" class="icon-button" aria-label="Close instructions">×</button></div><h1>How to play</h1><p>Claim 80% of the field to clear a sector.</p><ol><li><strong>Leave safe ground.</strong> Use arrow keys or WASD to steer the white diamond. On touchscreens, swipe or use the direction pad.</li><li><strong>Close the line.</strong> Crossing open space draws a trail. Reach cyan territory or the border to claim the area cut off from the Styx.</li><li><strong>Protect your trail.</strong> The Styx can cut any exposed line. Avoid crossing your own trail, and watch for gold crawlers along the edges.</li></ol><button id="gotIt" class="primary">Got it</button></dialog>
+  <dialog id="score-dialog" aria-labelledby="score-heading">
+    <h2 id="score-heading">High scores</h2>
+    <p id="score-summary"></p>
+    <div id="score-tabs" role="group" aria-label="Score list" hidden><button data-list="device">This device</button><button data-list="everyone">Everyone</button></div>
+    <div id="score-columns" class="ranking-grid" aria-hidden="true" hidden><span>#</span><span>Player</span><span>Points</span><span>Sector</span><span>Date</span></div>
+    <ol id="score-rows" aria-label="Ranked scores"></ol>
+    <p id="score-notice" role="status"></p>
+    <label id="initials-label" hidden>Your initials <input id="initials" maxlength="3" autocapitalize="characters" autocomplete="off" spellcheck="false"></label>
+    <div class="score-actions">
+      <button id="score-done" class="primary">Back</button>
+      <button id="score-quit" hidden>Quit</button>
+    </div>
+  </dialog>
 </body></html>

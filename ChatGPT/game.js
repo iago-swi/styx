@@ -11,9 +11,9 @@ const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let state = 'ready', level = 1, lives = 3, score = 0, elapsed = 0;
 let grid, player, enemy, trails, trailSet, origin, heading, terrain, border, openRegion, patrol, crawlers;
 let covered = 0, phase = .7, moveClock = 0, grace = 0, tPrev = 0, frameTime = 0;
-let scaleX = 1, scaleY = 1, viewW = 1, viewH = 1, best = 0, audioOn = true, audio, noteUntil = 0;
+let scaleX = 1, scaleY = 1, viewW = 1, viewH = 1, audioOn = true, audio, noteUntil = 0;
 let helpResume = false, effects = [], lastGeometry = [], pointerStart = null;
-try { best = Number(localStorage.getItem('styx-best')) || 0; audioOn = localStorage.getItem('styx-audio') !== 'off'; } catch {}
+try { audioOn = localStorage.getItem('styx-audio') !== 'off'; } catch {}
 const cell = (x,y) => y*W+x;
 const pos = i => ({x:i%W,y:Math.floor(i/W)});
 const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
@@ -28,7 +28,7 @@ function tone(f,end,duration,when=0,volume=.045,type='sine'){
   osc.connect(gain);gain.connect(audio.destination);osc.start(t);osc.stop(t+duration+.01);
 }
 function unlock(){if(!audioOn)return;try{audio ||= new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume().catch(()=>{});}catch{}}
-function storeBest(){if(score>best){best=score;try{localStorage.setItem('styx-best',String(best))}catch{}}}
+
 function setSound(toggle=false){
   if(toggle){audioOn=!audioOn;try{localStorage.setItem('styx-audio',audioOn?'on':'off')}catch{}if(audioOn){unlock();tone(500,700,.1)}}
   $('sound').querySelector('use').setAttribute('href',audioOn?'#volume':'#mute');
@@ -79,7 +79,7 @@ function sector(){
   rebuildTerrain();updateHUD();
 }
 function updateHUD(){
-  $('score').textContent=pad(score,6);$('best').textContent=pad(best,6);$('sector').textContent=pad(level,2);
+  $('score').textContent=pad(score,6);scores.updateBest();$('sector').textContent=pad(level,2);
   $('sectorName').textContent=names[(level-1)%names.length];$('pct').textContent=Math.floor(covered);
   $('meter').style.width=Math.min(100,covered/TARGET*100)+'%';$('meter').parentElement.setAttribute('aria-valuenow',String(Math.min(80,Math.floor(covered))));
   $('lives').innerHTML=Array.from({length:3},(_,i)=>'<svg aria-hidden="true" class="'+(i>=lives?'lost':'')+'"><use href="#ship"/></svg>').join('');
@@ -87,6 +87,8 @@ function updateHUD(){
 }
 function updateCoords(){$('coord').textContent='X '+pad(player.x,3)+'   Y '+pad(player.y,3)}
 function changeState(s){
+  $('score-open').hidden=s!=='ready';
+  $('best-label').hidden=s==='ready';
   state=s;heading=null;moveClock=0;const data={
     ready:['Standby','Start game','▶','Enter'],playing:['In play','Pause game','Ⅱ','Space'],paused:['Paused','Resume game','▶','Space'],
     over:['Run ended','Play again','↻','Enter'],clear:['Sector clear','Next sector','▶','Enter']
@@ -111,7 +113,7 @@ function lose(cause){
   if(grace>0||state!=='playing')return false;
   burst(player.x+.5,player.y+.5,'#ff8970',32);lives--;tone(210,40,.35,0,.065,'triangle');
   if(origin)player={...origin};trails=[];trailSet.clear();origin=null;heading=null;grace=2.1;
-  updateHUD();if(lives===0){storeBest();changeState('over')}else message(cause+' · Life lost');
+  updateHUD();if(lives===0){changeState('over');scores.finish({score,level})}else message(cause+' · Life lost');
   return true;
 }
 function claim(){
@@ -127,7 +129,7 @@ function claim(){
   for(let i=0;i<grid.length;i++)if(!seen[i])grid[i]=1;
   for(let i=0;i<trails.length;i+=5)burst(trails[i].x,trails[i].y,'#85fff0',2);
   trails=[];trailSet.clear();origin=null;rebuildTerrain();
-  const gain=Math.max(1,Math.round((covered-startCount)*100*level));score+=gain;storeBest();updateHUD();
+  const gain=Math.max(1,Math.round((covered-startCount)*100*level));score+=gain;updateHUD();
   message('+'+gain+'  ·  Territory claimed');tone(370,600,.13);tone(650,1000,.23,.09);
   if(covered>=TARGET){changeState('clear');tone(800,1400,.42,.2)}
 }
@@ -289,7 +291,7 @@ function placeAction(){
 compact.addEventListener('change',placeAction);placeAction();
 document.addEventListener('fullscreenchange',syncFull);
 document.addEventListener('keydown',e=>{
-  if($('instructions').open||e.metaKey||e.ctrlKey||e.altKey)return;
+  if($('instructions').open||$('score-dialog').open||e.metaKey||e.ctrlKey||e.altKey)return;
   const k=e.key.length===1?e.key.toLowerCase():e.key;
   if(keyDirs[k]){e.preventDefault();if(!e.repeat)steer(keyDirs[k]);return}
   if(k==='Escape'&&$('field').classList.contains('expanded')){$('field').classList.remove('expanded');syncFull();return}
@@ -306,4 +308,10 @@ canvas.addEventListener('pointermove',e=>{if(!pointerStart)return;const dx=e.cli
 canvas.addEventListener('pointerup',()=>pointerStart=null);canvas.addEventListener('pointercancel',()=>pointerStart=null);
 document.querySelectorAll('[data-dir]').forEach(b=>b.addEventListener('click',()=>steer(b.dataset.dir)));
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='playing')changeState('paused')});
+function returnToStart(){
+  score=0;level=1;lives=3;elapsed=0;phase=.7;
+  $('time').textContent='00:00';$('notice').textContent='';
+  sector();changeState('ready');$('action').focus({preventScroll:true});
+}
+const scores=new Scoreboard(action,returnToStart);
 sector();setSound();changeState('ready');new ResizeObserver(resize).observe(canvas);resize();requestAnimationFrame(frame);

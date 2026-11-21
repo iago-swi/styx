@@ -1,0 +1,10 @@
+name = "styx-vector-scores"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+send_metrics = false
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "styx-vector-scores"
+database_id = "b978d945-8c9c-41db-b231-d8d937ddf315"
