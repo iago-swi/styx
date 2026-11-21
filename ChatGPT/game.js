@@ -87,6 +87,7 @@ function updateHUD(){
 }
 function updateCoords(){$('coord').textContent='X '+pad(player.x,3)+'   Y '+pad(player.y,3)}
 function changeState(s){
+  $('game-version').hidden=s!=='ready';
   $('score-open').hidden=s!=='ready';
   $('best-label').hidden=s==='ready';
   state=s;heading=null;moveClock=0;const data={
@@ -314,4 +315,5 @@ function returnToStart(){
   sector();changeState('ready');$('action').focus({preventScroll:true});
 }
 const scores=new Scoreboard(action,returnToStart);
+$('game-version').textContent='Version '+document.querySelector('meta[name="version"]').content;
 sector();setSound();changeState('ready');new ResizeObserver(resize).observe(canvas);resize();requestAnimationFrame(frame);

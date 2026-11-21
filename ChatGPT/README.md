@@ -4,6 +4,8 @@ One long cut can win most of a sector, but the entire line is vulnerable until y
 
 **[Play Vector Arcade](https://iago-swi.github.io/styx/ChatGPT/)** · [High scores](#high-scores) · [Technical notes](#technical-notes)
 
+The start screen shows the version below the Vector Arcade name. See the [changelog](CHANGELOG.md) for what changed in each release.
+
 ![Vector Arcade gameplay: a cut in progress on a teal-bordered field, with the pink Styx swirling over a nebula and a score panel on the right](screenshot.jpg)
 
 For offline play, download the repository and open `ChatGPT/index.html` in a browser. The game, sound, artwork, and device rankings work locally. The shared leaderboard uses an internet connection.
@@ -34,6 +36,7 @@ GitHub Pages serves the game as static files. The browser loads two deferred scr
 
 | File | What it contributes |
 | --- | --- |
+| [CHANGELOG.md](CHANGELOG.md) | Release dates and player-facing changes for each version of Vector Arcade. |
 | [index.html](index.html) | The visible canvas, score and territory readouts, native help dialog, overlay buttons, and inline SVG icons. |
 | [game.js](game.js) | The grid, capture algorithm, crawler patrols, Styx geometry, Canvas 2D renderer, Web Audio cues, and input handlers. |
 | [scores.js](scores.js) | Device-score migration and ranking, the game-over dialog, initials editing, and requests to the shared leaderboard. |

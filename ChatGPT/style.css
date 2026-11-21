@@ -50,3 +50,11 @@
   #score-dialog { padding: 18px 12px; }
   #score-columns, #score-rows li { font-size: 12px; gap: 3px; }
 }
+#game-version {
+  display: block;
+  margin-top: 3px;
+  color: var(--dim);
+  font: 400 12px/1.2 var(--mono);
+  letter-spacing: normal;
+  white-space: nowrap;
+}
