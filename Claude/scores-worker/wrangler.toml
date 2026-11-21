@@ -1,0 +1,10 @@
+# Cloudflare Worker for the shared Vitrail high-score list.
+name = "vitrail-scores"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+send_metrics = false
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vitrail-scores"
+database_id = "e3852557-eb66-4dc3-ad6a-fcd597fd97d5"

@@ -60,6 +60,7 @@ body.ingame #keys{opacity:1}
 .screen.show{display:block;pointer-events:auto}
 #title{background:linear-gradient(48deg,rgba(5,6,13,.94) 0%,rgba(5,6,13,.78) 32%,rgba(5,6,13,.18) 62%,rgba(5,6,13,0) 78%)}
 #title.leaving{opacity:0;transition:opacity .5s}
+#title[inert] .card{visibility:hidden}
 .card{position:absolute;left:calc(var(--fx) + clamp(18px,4vw,64px));bottom:calc(100vh - var(--fy) - var(--fh) + clamp(18px,4vh,56px));
   max-width:min(660px,calc(var(--fw) - 40px))}
 .card h1{font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(84px,15.5vw,250px);line-height:.84;
@@ -84,12 +85,64 @@ body.ingame #keys{opacity:1}
 .go:focus-visible{outline:2px solid #fff;outline-offset:4px}
 .go kbd{font:400 .82em var(--sans);opacity:.62}
 .small{font-size:13px;color:rgba(246,239,224,.5);margin-top:1.1em}
+.acts{display:flex;flex-wrap:wrap;align-items:center;gap:12px 14px}
+.quiet{font:500 clamp(14px,1.1vw,16px) var(--sans);color:var(--ivory);background:rgba(5,6,13,.4);border:1px solid rgba(246,239,224,.3);
+  border-radius:999px;padding:.8em 1.3em;cursor:pointer;transition:border-color .2s}
+.quiet b{font:500 1.12em var(--serif);font-variant-numeric:lining-nums tabular-nums;color:var(--gold);margin-left:.55em}
+.quiet b:empty{display:none}
+.quiet kbd{font:400 .82em var(--sans);opacity:.55;margin-left:.6em}
+.quiet:hover{border-color:var(--gold)}
+.quiet:focus-visible,.tabs button:focus-visible{outline:2px solid #fff;outline-offset:3px}
 
 #over,#pause{background:radial-gradient(ellipse at center,rgba(5,6,13,.86) 0%,rgba(5,6,13,.62) 60%,rgba(5,6,13,.4) 100%)}
 .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:24px}
 .mid h2{font-family:var(--serif);font-style:italic;font-weight:400;font-size:clamp(46px,7.6vw,118px);line-height:1;letter-spacing:-.03em}
 .mid .num{font-family:var(--serif);font-size:clamp(34px,4.4vw,64px);font-variant-numeric:lining-nums;color:var(--gold);line-height:1.1;margin-top:.2em}
 .mid p{font-size:16px;color:var(--dim);margin-bottom:1.4em}
+
+/* ---------- high scores ---------- */
+#scores{background:radial-gradient(ellipse at center,rgba(5,6,13,.93) 0%,rgba(5,6,13,.82) 60%,rgba(5,6,13,.66) 100%)}
+.tall h2{font-size:clamp(36px,5vw,68px)}
+.tall .num{font-size:clamp(28px,3.2vw,44px)}
+.mid.tall p{margin-bottom:0}
+.tabs{display:none;margin-top:16px;padding:3px;border:1px solid rgba(246,239,224,.2);border-radius:999px;background:rgba(5,6,13,.35)}
+.shared .tabs{display:inline-flex}
+.tabs button{font:500 14px var(--sans);color:var(--dim);background:none;border:0;border-radius:999px;padding:8px 16px;cursor:pointer;
+  transition:background .2s,color .2s}
+.tabs button:hover{color:var(--ivory)}
+.tabs button[aria-pressed="true"]{color:var(--ivory);background:rgba(246,239,224,.14);box-shadow:inset 0 0 0 1px rgba(246,239,224,.3)}
+.list{list-style:none;margin-top:14px;display:grid;justify-content:center;column-gap:44px;font-size:15px;line-height:1.75;color:var(--dim);
+  font-variant-numeric:lining-nums tabular-nums;text-align:left;white-space:nowrap}
+.list:empty{display:none}
+.list li{display:grid;grid-template-columns:1.5em 3.2em 5.6em 5.8em 5.8em;column-gap:16px}
+.list .rank,.list .pts{text-align:right}
+.list .name{font-weight:600;letter-spacing:.08em;color:var(--ivory)}
+.list .mine{color:var(--ivory);text-shadow:0 0 16px rgba(255,220,150,.6)}
+.list .mine .name,.list .mine .pts{color:var(--gold)}
+.mid .note{font-size:13px;color:var(--dim);margin-top:10px}
+.name-row{display:block;margin-top:12px;font-size:14px;color:var(--dim)}
+.name-row[hidden],.note[hidden]{display:none}
+.name-row input{font:600 16px var(--sans);letter-spacing:.08em;text-align:center;text-transform:uppercase;color:var(--ivory);width:3.6em;
+  margin-left:10px;padding:5px 0 4px;background:rgba(246,239,224,.08);border:0;border-bottom:1px solid var(--gold);border-radius:6px 6px 0 0;
+  outline:none;caret-color:var(--gold);user-select:text;-webkit-user-select:text;touch-action:manipulation}
+.name-row input:focus-visible{box-shadow:0 0 0 2px rgba(255,233,184,.45)}
+.tall .acts,.tall>.go{margin-top:18px}
+.mid .acts{justify-content:center}
+@media (max-width:479px){.list li{grid-template-columns:1.5em 3.2em 5.6em 5.8em}.list .day{display:none}
+  .mid .acts{gap:8px}.mid .acts kbd{display:none}.mid .acts .go,.mid .acts .quiet{font-size:14px;padding:.8em 1.2em}}
+@media (max-height:700px) and (min-width:660px){   /* a low, wide window: two columns of five */
+  .list{grid-template-rows:repeat(5,auto);grid-auto-flow:column;line-height:1.6}
+  .list li{grid-template-columns:1.5em 3.2em 5.6em 5.8em}.list .day{display:none}}
+@media (max-height:620px) and (max-width:659px){.mid{padding:14px}.tall h2{font-size:28px}.tabs{margin-top:10px}.tabs button{padding:6px 14px}
+  .list{line-height:1.5;margin-top:10px}.name-row{margin-top:8px}.tall .acts,.tall>.go{margin-top:12px}}
+@media (max-height:460px){.mid{padding:10px}.tall h2{font-size:28px}.tall .num{font-size:24px}.mid.tall p{font-size:14px}.tabs{margin-top:6px}
+  .tabs button{padding:5px 14px}.list{line-height:1.45;margin-top:8px}.name-row{margin-top:6px}.tall .acts,.tall>.go{margin-top:10px}
+  .tall .go,.tall .quiet{padding:.6em 1.3em}}
+@media (max-height:520px) and (max-width:659px){   /* a low, narrow window: two short columns */
+  .list{grid-template-rows:repeat(5,auto);grid-auto-flow:column;column-gap:28px}
+  .list li{grid-template-columns:1.5em 3.2em 5.6em}.list .wv,.list .day{display:none}}
+@media (max-height:360px){.mid{gap:3px;padding:6px}.tall h2{font-size:22px}#oSub{display:none}.list{line-height:1.35}
+  .tabs button{padding:4px 14px}.tall .go,.tall .quiet{padding:.5em 1.2em}}
 #nogl{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:30px;text-align:center;font-size:18px;line-height:1.5}
 
 @media (max-width:820px){.best,.mark{display:none}.stat b,.prog .row b{font-size:20px}}
@@ -125,17 +178,43 @@ body.ingame #keys{opacity:1}
       <li class="cinder">Cinders run along the lines. Don't let one catch you, or reach the start of your cut.</li>
       <li>Light 75% of the window to finish it.</li>
     </ul>
-    <button class="go fade" id="btnStart">Start cutting <kbd>Enter</kbd></button>
+    <div class="acts fade">
+      <button class="go" id="btnStart" type="button">Start cutting <kbd>Enter</kbd></button>
+      <button class="quiet" id="btnScores" type="button">High scores<b id="tBest"></b></button>
+    </div>
     <p class="small fade">Arrow keys or WASD. On a touch screen, swipe to steer and tap to stop.</p>
   </div>
 </section>
 
 <section id="over" class="screen">
-  <div class="mid">
+  <div class="mid tall">
     <h2 id="oTitle">The window went dark</h2>
     <div class="num" id="oScore">0</div>
     <p id="oSub"></p>
-    <button class="go" id="btnAgain">Cut again <kbd>Enter</kbd></button>
+    <div class="tabs" role="group" aria-label="Which list">
+      <button type="button" data-list="local" aria-pressed="true">This device</button>
+      <button type="button" data-list="shared" aria-pressed="false">Everyone</button>
+    </div>
+    <ol id="overList" class="list" aria-label="High scores"></ol>
+    <p id="overNote" class="note" hidden></p>
+    <label id="nameRow" class="name-row" hidden>Your initials <input id="initials" maxlength="3" autocomplete="off" spellcheck="false" autocapitalize="characters"></label>
+    <div class="acts">
+      <button class="go" id="btnAgain" type="button">Cut again <kbd>Enter</kbd></button>
+      <button class="quiet" id="btnTitle" type="button">Title screen <kbd>Esc</kbd></button>
+    </div>
+  </div>
+</section>
+
+<section id="scores" class="screen">
+  <div class="mid tall">
+    <h2>High scores</h2>
+    <div class="tabs" role="group" aria-label="Which list">
+      <button type="button" data-list="local" aria-pressed="true">This device</button>
+      <button type="button" data-list="shared" aria-pressed="false">Everyone</button>
+    </div>
+    <ol id="scoreList" class="list" aria-label="High scores"></ol>
+    <p id="scoreNote" class="note" hidden></p>
+    <button class="go" id="btnBack" type="button">Back <kbd>Esc</kbd></button>
   </div>
 </section>
 
@@ -143,6 +222,7 @@ body.ingame #keys{opacity:1}
   <div class="mid">
     <h2>Paused</h2>
     <p>Press P to pick up the cutter again.</p>
+    <div class="acts"><button class="quiet" id="btnEnd" type="button">End this run</button></div>
   </div>
 </section>
 
@@ -187,9 +267,99 @@ let fuse = null, shake = 0, chroma = 0, fade = 0, fadeTarget = 1, pulse = 0, tra
 const P = { x: NX, y: GH - 1, fx: 0, fy: 0, tx: 0, ty: 0, prog: 0, moving: false, dir: 0, drawing: false, closing: false,
             trail: [], inv: 0, rx: NX, ry: GH - 1, speed: 22, hidden: true };
 const held = [];
-try { best = +localStorage.getItem('vitrail.best') || 0; } catch (e) {}
+const prefs = { get(k) { try { return localStorage.getItem('vitrail.' + k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem('vitrail.' + k, v); } catch (e) {} } };
+best = +prefs.get('best') || 0;
 
 const fmt = n => Math.round(n).toLocaleString('de-CH');
+
+/* ---------- high scores ---------- */
+// The ten best runs in this browser, best first: { n: initials, s: score, w: window reached, d: 'YYYY-MM-DD' }.
+const TOP = 10;
+const cleanName = v => (String(v || '').toLocaleUpperCase().match(/[\p{L}\p{N}]/gu) || []).slice(0, 3).join('');
+function loadScores() {                // stored data is read as untrusted: wrong shapes are dropped, the rest is normalised
+  let a = null; try { a = JSON.parse(prefs.get('scores')); } catch (e) {}
+  if (!Array.isArray(a)) a = [];
+  a = a.filter(r => r && Number.isFinite(r.s) && r.s > 0)
+    .map(r => ({ n: cleanName(r.n), s: Math.round(r.s), w: Number.isInteger(r.w) && r.w > 0 ? r.w : 0, d: /^\d{4}-\d\d-\d\d$/.test(r.d) ? r.d : '' }))
+    .sort((x, y) => y.s - x.s).slice(0, TOP);
+  if (!a.length && best > 0) a.push({ n: '', s: best, w: 0, d: '' });   // a best score from before the list existed
+  return a;
+}
+const scores = loadScores(); if (scores.length) best = Math.max(best, scores[0].s);
+const saveScores = () => prefs.set('scores', JSON.stringify(scores));
+function addScore(s, w) {              // returns the new entry, or null when the score does not make the list
+  if (s <= 0 || (scores.length >= TOP && s <= scores[TOP - 1].s)) return null;
+  const now = new Date(), two = v => String(v).padStart(2, '0');
+  const e = { n: cleanName(prefs.get('name')), s, w, d: `${now.getFullYear()}-${two(now.getMonth() + 1)}-${two(now.getDate())}` };
+  let i = scores.findIndex(r => r.s < s); if (i < 0) i = scores.length;         // an equal score ranks below the older one
+  scores.splice(i, 0, e); scores.length = Math.min(scores.length, TOP); saveScores();
+  return e;
+}
+let mine = null;                       // the list entry made by the game that just ended
+
+// The shared list lives on a small web service (see scores-worker/). With no address the game keeps
+// to this device, makes no network requests, and the tabs for choosing a list stay hidden.
+const SHARED = 'https://vitrail-scores.iago-swi.workers.dev/';
+let view = SHARED && prefs.get('list') === 'shared' ? 'shared' : 'local';
+const shared = { state: 'idle', top: [], rank: 0, run: null, seq: 0, timer: 0 };   // state: idle, loading, ok or error
+const randomKey = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+// Without a run this fetches the list. With one it sends the run first; the same key sent again only
+// changes the initials, so a retry or an edit never makes a second entry.
+function sharedLoad(run) {
+  if (!SHARED) return;
+  const seq = ++shared.seq, opt = AbortSignal.timeout ? { signal: AbortSignal.timeout(8000) } : {};
+  if (run) { opt.method = 'POST'; opt.body = JSON.stringify({ k: run.k, n: run.n, s: run.s, w: run.w }); }   // a plain-text body needs no CORS preflight
+  if (!shared.top.length) shared.state = 'loading';
+  fetch(SHARED + '?game=vitrail', opt)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => {
+      if (seq !== shared.seq) return;                  // a newer request is on its way
+      shared.top = (Array.isArray(d.top) ? d.top : []).slice(0, TOP).filter(r => r && Number.isFinite(r.s))
+        .map(r => ({ n: cleanName(r.n), s: Math.round(r.s), w: Number.isInteger(r.w) && r.w > 0 ? r.w : 0, d: /^\d{4}-\d\d-\d\d$/.test(r.d) ? r.d : '', me: r.me === true }));
+      shared.rank = Number.isInteger(d.rank) ? d.rank : 0; shared.state = 'ok';
+    })
+    .catch(() => { if (seq === shared.seq) shared.state = 'error'; })
+    .then(refreshLists);
+}
+// Fills a list element with the list on view. Text goes in through textContent only, so a stored or
+// downloaded name can never become markup.
+function drawList(ol, note) {
+  const sh = view === 'shared', rows = sh ? shared.top : scores;
+  ol.textContent = '';
+  rows.forEach((r, i) => {
+    const li = document.createElement('li');
+    const cell = (cls, text) => { const c = document.createElement('span'); c.className = cls; c.textContent = text; li.appendChild(c); };
+    if (sh ? r.me : r === mine) li.className = 'mine';
+    cell('rank', i + 1); cell('name', r.n || '—'); cell('pts', fmt(r.s));
+    cell('wv', r.w ? 'Window ' + r.w : ''); cell('day', r.d ? r.d.split('-').reverse().join('.') : '');
+    ol.appendChild(li);
+  });
+  let text = '';
+  if (!sh) text = rows.length ? '' : 'No scores yet.';
+  else if (shared.state === 'loading') text = 'Fetching the shared list…';
+  else if (shared.state === 'error') text = 'The shared list cannot be reached right now.' + (shared.run && mine ? ' Your score is kept on this device.' : '');
+  else if (!rows.length) text = 'No scores yet.';
+  else if (shared.run && shared.rank > rows.length) text = `Your score is number ${fmt(shared.rank)} on the shared list.`;
+  note.textContent = text; note.hidden = !text;
+}
+const scoresOpen = () => $('scores').classList.contains('show');
+function refreshLists() {
+  if ($('over').classList.contains('show')) drawList($('overList'), $('overNote'));
+  if (scoresOpen()) drawList($('scoreList'), $('scoreNote'));
+}
+function setView(v) {
+  view = v === 'shared' && SHARED ? 'shared' : 'local'; prefs.set('list', view);
+  for (const b of document.querySelectorAll('.tabs button')) b.setAttribute('aria-pressed', b.dataset.list === view ? 'true' : 'false');
+  if (view === 'shared' && shared.state === 'idle') sharedLoad();
+  refreshLists();
+}
+function openScores() {
+  if (state !== 'title' || trans) return;
+  if (view === 'shared') sharedLoad();
+  $('scores').classList.add('show'); $('title').inert = true; refreshLists();
+  setTimeout(() => $('btnBack').focus(), 50);
+}
+function closeScores() { $('scores').classList.remove('show'); $('title').inert = false; $('btnScores').focus(); }
 const inb = (x, y) => x >= 0 && y >= 0 && x < GW && y < GH;
 const X = cx => F.x + cx * F.cs, Y = cy => F.y + cy * F.cs;
 const rnd = (a, b) => a + Math.random() * (b - a);
@@ -563,6 +733,15 @@ function startGame() {
   trans = () => { score = 0; shownScore = 0; lives = 3; initLevel(1, false); state = 'playing'; document.body.classList.add('ingame');
                   $('title').classList.remove('show', 'leaving'); intro(); };
 }
+function toTitle() {                   // from the game-over screen back to the opening screen and its demo
+  if (state !== 'over' || trans) return;
+  $('over').classList.remove('show'); fadeTarget = 0;
+  trans = () => { initLevel(1, true); state = 'title'; $('title').classList.add('show'); setTimeout(() => $('btnStart').focus(), 50); };
+}
+function endRun() {                    // give up a paused run: it ends like any other, and its score counts
+  if (!paused) return;
+  togglePause(); gameOver();
+}
 function levelClear(split) {
   state = 'clear'; stateUntil = T + 4.2; nextFire = T + 0.3;
   const bonus = Math.round((Math.max(0, pct - goal) * 500 + level * 1000 + (split ? 5000 : 0)) / 10) * 10; const lit = pct;
@@ -578,10 +757,19 @@ function levelClear(split) {
   showBanner(split ? 'Wisps parted' : `${theme.name} is lit`, `${lit.toFixed(1)}% cut by hand. Bonus +${fmt(bonus)}.`, 3600);
 }
 function gameOver() {
-  state = 'over'; const rec = score > best; if (rec) { best = score; try { localStorage.setItem('vitrail.best', String(best)); } catch (e) {} }
-  $('oScore').textContent = fmt(score);
-  $('oSub').textContent = rec ? `A new best, reached in window ${level}.` : `You reached window ${level}. Your best is ${fmt(best)}.`;
-  $('over').classList.add('show'); document.body.classList.remove('ingame'); sfx.over(); setTimeout(() => $('btnAgain').focus(), 50);
+  state = 'over'; const rec = score > best; if (rec) { best = score; prefs.set('best', String(best)); }
+  mine = addScore(score, level);
+  shared.run = SHARED && score > 0 ? { k: randomKey(), n: cleanName(prefs.get('name')), s: score, w: level } : null;
+  for (const r of shared.top) r.me = false;            // the mark of the run before this one
+  if (shared.run) sharedLoad(shared.run); else if (view === 'shared') sharedLoad();
+  $('oScore').textContent = fmt(score); $('tBest').textContent = best > 0 ? fmt(best) : '';
+  $('oSub').textContent = rec ? `A new best, reached in window ${level}.`
+    : mine ? `You reached window ${level}. That is number ${scores.indexOf(mine) + 1} on this device.` : `You reached window ${level}. Your best is ${fmt(best)}.`;
+  const listed = !!(mine || shared.run), known = cleanName(prefs.get('name'));
+  $('nameRow').hidden = !listed; $('initials').value = known;
+  $('over').classList.add('show'); $('banner').classList.remove('show'); document.body.classList.remove('ingame'); refreshLists(); sfx.over();
+  // a first entry asks for initials; later ones reuse them, so Enter starts the next game straight away
+  setTimeout(() => (listed && !known ? $('initials') : $('btnAgain')).focus(), 50);
 }
 function togglePause() {
   if (state !== 'playing' && state !== 'dying') return; paused = !paused; $('pause').classList.toggle('show', paused);
@@ -935,8 +1123,13 @@ const KEYS = { ArrowUp: 0, KeyW: 0, ArrowRight: 1, KeyD: 1, ArrowDown: 2, KeyS: 
 function press(d) { const i = held.indexOf(d); if (i >= 0) held.splice(i, 1); held.push(d); }
 function release(d) { const i = held.indexOf(d); if (i >= 0) held.splice(i, 1); }
 addEventListener('keydown', e => {
+  if (e.target && e.target.tagName === 'INPUT') return;       // typing initials: no game key applies
   if (e.code in KEYS) { e.preventDefault(); if (!e.repeat) press(KEYS[e.code]); return; }
-  if (e.code === 'Enter' || e.code === 'Space') { if (state === 'title' || state === 'over') { e.preventDefault(); startGame(); } else if (e.code === 'Space') e.preventDefault(); return; }
+  if (e.code === 'Enter' || e.code === 'Space') {
+    if (document.activeElement && document.activeElement.tagName === 'BUTTON') return;     // a focused button does its own job
+    e.preventDefault(); if (scoresOpen()) closeScores(); else if (state === 'title' || state === 'over') startGame(); return; }
+  if (e.code === 'Escape' && scoresOpen()) { closeScores(); return; }
+  if (e.code === 'Escape' && state === 'over') { toTitle(); return; }
   if (e.code === 'KeyP' || e.code === 'Escape') { togglePause(); return; }
   if (e.code === 'KeyM') { AU.on = !AU.on; if (AU.ctx) AU.master.gain.setTargetAtTime(AU.on && !paused ? 0.6 : 0, AU.ctx.currentTime, 0.05); return; }
   if (e.code === 'KeyF') { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(() => {}); }
@@ -945,6 +1138,25 @@ addEventListener('keyup', e => { if (e.code in KEYS) release(KEYS[e.code]); });
 addEventListener('blur', () => { held.length = 0; });
 document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'playing' && !paused) togglePause(); });
 $('btnStart').addEventListener('click', startGame); $('btnAgain').addEventListener('click', startGame);
+$('btnScores').addEventListener('click', openScores); $('btnBack').addEventListener('click', closeScores);
+$('btnTitle').addEventListener('click', toTitle); $('btnEnd').addEventListener('click', endRun);
+for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => setView(b.dataset.list));
+document.body.classList.toggle('shared', !!SHARED); setView(view); $('tBest').textContent = best > 0 ? fmt(best) : '';
+$('initials').addEventListener('input', e => {
+  if (e.isComposing) return;
+  const n = $('initials').value = cleanName($('initials').value); prefs.set('name', n);
+  if (mine) { mine.n = n; saveScores(); }
+  const run = shared.run;
+  if (run) {                           // show the change at once, send it when the typing stops
+    run.n = n; for (const r of shared.top) if (r.me) r.n = n;
+    clearTimeout(shared.timer); shared.timer = setTimeout(() => sharedLoad(run), 700);
+  }
+  refreshLists();
+});
+$('initials').addEventListener('keydown', e => {     // a steering key still held down must not type; Enter hands over to the button
+  if (e.repeat) e.preventDefault();
+  else if (e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); $('btnAgain').focus(); }
+});
 let tp = null;
 addEventListener('pointerdown', e => { if (e.pointerType === 'mouse') return; tp = { x: e.clientX, y: e.clientY, moved: false }; });
 addEventListener('pointermove', e => { if (!tp || e.pointerType === 'mouse') return; const dx = e.clientX - tp.x, dy = e.clientY - tp.y;
@@ -965,7 +1177,7 @@ function frame(ts) {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
-window.__vitrail = { get state() { return state; }, get pct() { return pct; }, get lives() { return lives; }, get score() { return score; }, P, held,
+window.__vitrail = { scores, shared, setView, get state() { return state; }, get pct() { return pct; }, get lives() { return lives; }, get score() { return score; }, P, held,
   get wisps() { return wisps; }, get cinders() { return cinders; }, press, release, step: (dt) => { update(dt); updateMask(dt); render(); } };
 })();
 </script>
