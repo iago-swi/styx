@@ -1,8 +1,14 @@
 # STYX · Vector Arcade
 
+One long cut can win most of a sector, but the entire line is vulnerable until you reach cyan ground. Watch the pink ribbon as you steer. Even when its center passes clear, a twisting tip can catch your trail. Gold crawlers patrol the boundary and can reach the spot where you left it.
+
+**[Play Vector Arcade](https://iago-swi.github.io/styx/ChatGPT/)** · [High scores](#high-scores) · [Technical notes](#technical-notes)
+
 ![Vector Arcade gameplay: a cut in progress on a teal-bordered field, with the pink Styx swirling over a nebula and a score panel on the right](screenshot.jpg)
 
-Open `index.html` in a browser to play offline. All game code, sounds, and artwork run locally. No installation or build step is required.
+For offline play, download the repository and open `ChatGPT/index.html` in a browser. The game, sound, artwork, and device rankings work locally. The shared leaderboard uses an internet connection.
+
+## How to play
 
 Press **Enter** to start. Steer the white diamond with **WASD** or the **arrow keys**. Each turn sets your direction until you turn again, reach the edge, or close a trail. On a touchscreen, swipe across the field or use the direction buttons.
 
@@ -10,7 +16,7 @@ Leave the cyan territory and return to safe ground to capture the area separated
 
 Use **Space** to pause or resume and **M** to toggle sound.
 
-### High scores
+## High scores
 
 Before starting, select **High scores** beside the trophy. **This device** ranks the ten best completed runs in this browser. **Everyone** shows the shared Styx top ten across players. Each entry shows initials, points, sector reached, and date. Older entries win ties.
 
@@ -24,7 +30,7 @@ Offline, qualifying device scores still save. The game imports a personal best f
 
 ### Stack and source layout
 
-Vector Arcade is a static browser game. A deferred script starts the simulation once the HTML controls exist. The same files run from GitHub Pages or directly from disk. [Play Vector Arcade](https://iago-swi.github.io/styx/ChatGPT/)
+GitHub Pages serves the game as static files. The browser loads two deferred scripts in order. `scores.js` defines the scoreboard, then `game.js` connects it to the controls and starts the simulation. Only the shared rankings use a backend. The same game files run directly from disk.
 
 | File | What it contributes |
 | --- | --- |
@@ -111,10 +117,19 @@ The browser stores the ranked device list under `styx-scores`, remembered initia
 
 ### Shared leaderboard
 
-The Worker receives the score, sector, optional initials, and a random 128-bit run key. It checks that the score is plausible for the ending sector, accounting for rounding on each capture. A D1 transaction ranks the run, breaks score ties by insertion order, and retains the best 200 entries. The public list returns the top ten and omits run keys. [Live score service](https://styx-vector-scores.iago-swi.workers.dev/)
+When the last life is lost, the scoreboard records a qualifying device score before opening the initials field. A positive finish also goes to Vector Arcade’s dedicated Cloudflare Worker, whichever tab is selected. A full device board admits a run only if it beats the tenth score. The **Best** readout uses the first entry in that device list.
 
-Editing initials reuses the run key so the same finish keeps its original score and place. The client sends edits in order after a 700 ms typing pause. Each request times out after eight seconds. A failed upload leaves the device entry available and displays a connection notice. Shared dates use the service’s UTC clock and device dates use the player’s local calendar.
+| Request | Result |
+| --- | --- |
+| `GET /` | Returns `top`, up to ten rows with initials (`n`), points (`s`), sector (`w`), and UTC date (`d`). |
+| `POST /` | Accepts a random 128-bit run key (`k`), initials, points, and sector. Returns the top ten plus the submitted run’s rank. The `me` flag identifies the player’s own row if it appears. |
+
+A D1 transaction admits the run, computes its rank, reads the top ten, and trims the table to the best 200 entries. Earlier insertions win ties. The rank is computed before trimming, so an eleventh-place finisher sees their place beneath a ten-row board. The Worker checks score bounds against the sector reached and allows up to 30 new entries across all players in a rolling minute. Public responses omit the run key. [Worker implementation](scores-worker/worker.js) · [Database schema](scores-worker/schema.sql) · [Live rankings](https://styx-vector-scores.iago-swi.workers.dev/)
+
+Initials edits reuse the run key. For a retained run, only the initials change, preserving its score, date, and tie order. The client waits for a 700 ms typing pause and sends edits for a run in sequence. Requests time out after eight seconds. A failed upload leaves a qualifying device entry available. Device dates use the player’s local calendar, so the two boards can show different dates near midnight.
 
 ### Verification
 
 The worked example above was replayed against the game logic with the Styx on the east side of the cut. Checks covered the exact cell gain and score, loss of an exposed trail after self-contact, return to its origin, and lives carried through a sector transition. A keyboard play-test in the browser also reproduced the 1,389-point opening cut and confirmed that pausing retained the captured field.
+
+A separate Chrome check finished the 1,389-point run, entered initials, selected **Quit**, and reopened **High scores** to confirm the entry survived the return to the start screen. Tests against an isolated SQLite database covered ties, initials edits, and an eleventh-place finish. Client checks also covered legacy best-score migration and a failed shared submission.

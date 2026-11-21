@@ -18,6 +18,8 @@ To play offline, download or clone this repository and open `index.html` in your
 
 ## ChatGPT version
 
+In **Vector Arcade**, steer a white diamond across a nebula and close your trail before the pink Styx reaches it. The side cut off from the Styx becomes yours. Claim 80% to advance, then see how far your three lives take you. Finished runs can earn a place on the device or shared high-score board. [Play Vector Arcade](https://iago-swi.github.io/styx/ChatGPT/) · [Controls and technical notes](ChatGPT/README.md)
+
 ![Vector Arcade gameplay: a cut in progress on a teal-bordered field, with the pink Styx swirling over a nebula and a score panel on the right](ChatGPT/screenshot.jpg)
 
 ## Gemini version
