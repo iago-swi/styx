@@ -8,7 +8,15 @@ Press **Enter** to start. Steer the white diamond with **WASD** or the **arrow k
 
 Leave the cyan territory and return to safe ground to capture the area separated from the Styx. Avoid crossing your trail, letting the Styx cut it, or meeting an edge crawler. You start with three lives. Claim **80%** to advance to the next sector.
 
-Use **Space** to pause or resume and **M** to toggle sound. The game saves your best score in the browser when local storage is available.
+Use **Space** to pause or resume and **M** to toggle sound.
+
+### High scores
+
+Before starting, select **High scores** beside the trophy. **This device** ranks the ten best completed runs in this browser. **Everyone** shows the shared Styx top ten across players. Each entry shows initials, points, sector reached, and date. Older entries win ties.
+
+At game over, a positive score is submitted automatically, even when the device list is selected. Your row is highlighted if it makes the displayed top ten. A lower shared finish shows its rank beneath the list. Leave the initials blank to use a dash, or enter up to three letters or digits. The game remembers your initials. **Play again** starts a fresh run, and **Quit** returns to the start screen.
+
+Offline, qualifying device scores still save. The game imports a personal best from the previous release into the device list with dashes for the unknown player, sector, and date.
 
 <a id="how-it-is-built"></a>
 
@@ -22,6 +30,8 @@ Vector Arcade is a static browser game. A deferred script starts the simulation 
 | --- | --- |
 | [index.html](index.html) | The visible canvas, score and territory readouts, native help dialog, overlay buttons, and inline SVG icons. |
 | [game.js](game.js) | The grid, capture algorithm, crawler patrols, Styx geometry, Canvas 2D renderer, Web Audio cues, and input handlers. |
+| [scores.js](scores.js) | Device-score migration and ranking, the game-over dialog, initials editing, and requests to the shared leaderboard. |
+| [scores-worker/](scores-worker/) | The Cloudflare Worker, D1 schema, and deployment configuration for Vector Arcade’s dedicated score service. |
 | [style.css](style.css) | The arcade console layout, nebula background, compact controls, fullscreen fallback, and keyboard focus styles. |
 | [nebula.webp](nebula.webp) | The 79 KiB space backdrop. Moving objects and claimed territory are drawn over this image. |
 
@@ -97,7 +107,13 @@ The first sound-enabled user interaction creates or resumes a Web Audio context.
 | Lose a life | A triangle wave falls from 210 to 40 Hz over 350 ms. |
 | Clear a sector | An 800–1,400 Hz rise enters 200 ms after the capture cue begins. |
 
-The browser stores the best score under `styx-best` and the sound preference under `styx-audio`. If storage is unavailable, the current run still keeps both values in memory.
+The browser stores the ranked device list under `styx-scores`, remembered initials under `styx-initials`, the selected list under `styx-score-list`, and the sound preference under `styx-audio`. It reads the older `styx-best` key for migration. If browser storage is unavailable, device scores last for the session.
+
+### Shared leaderboard
+
+The Worker receives the score, sector, optional initials, and a random 128-bit run key. It checks that the score is plausible for the ending sector, accounting for rounding on each capture. A D1 transaction ranks the run, breaks score ties by insertion order, and retains the best 200 entries. The public list returns the top ten and omits run keys. [Live score service](https://styx-vector-scores.iago-swi.workers.dev/)
+
+Editing initials reuses the run key so the same finish keeps its original score and place. The client sends edits in order after a 700 ms typing pause. Each request times out after eight seconds. A failed upload leaves the device entry available and displays a connection notice. Shared dates use the service’s UTC clock and device dates use the player’s local calendar.
 
 ### Verification
 
