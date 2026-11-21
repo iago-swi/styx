@@ -26,6 +26,8 @@ In **Vector Arcade**, steer a white diamond across a nebula and close your trail
 
 ## Gemini version
 
+In **Neon Abyss**, carve in 8 directions across a gravitationally warped nebula and seal regions to crystallize five procedural stained-glass realms under WebGL 2 HDR bloom. Time closures to the cycling ×1 / ×5 / ×10 multiplier, crush border caterpillars, and claim 80% to advance. Finished runs can enter the high-score list on the device and the shared board between players. [Play Neon Abyss](https://iago-swi.github.io/styx/Gemini/) · [Controls and technical notes](Gemini/README.md)
+
 ![Neon Abyss gameplay: cyan, magenta, and solar gold hexagonal crystal panels framing a warped nebula grid where the iridescent Styx swirls near an active carving tether](Gemini/screenshot.jpg)
 
 ## Game history

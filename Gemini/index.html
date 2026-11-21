@@ -138,6 +138,27 @@
                 <span>ENTER THE ABYSS</span>
                 <kbd class="btn-kbd">SPACE</kbd>
               </button>
+              <button id="btn-highscores" class="btn-secondary">HIGH SCORES</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- HIGH SCORES OVERLAY -->
+        <section id="overlay-highscores" class="overlay hidden">
+          <div class="overlay-card scores-card">
+            <div class="overlay-eyebrow">HALL OF CRYSTALS</div>
+            <h2 class="overlay-heading gold-text">HIGH SCORES</h2>
+            <div id="hs-tabs" class="score-tabs" role="tablist" aria-label="Score list">
+              <button type="button" class="score-tab-btn active" role="tab" aria-selected="true" data-score-tab="device">This device</button>
+              <button type="button" class="score-tab-btn" role="tab" aria-selected="false" data-score-tab="shared">Everyone</button>
+            </div>
+            <div id="hs-list" class="scores-list" role="list"></div>
+            <p id="hs-msg" class="scores-msg hidden" aria-live="polite"></p>
+            <div class="cta-row">
+              <button id="btn-hs-back" class="btn-secondary">
+                <span>BACK</span>
+                <kbd class="btn-kbd">ESC</kbd>
+              </button>
             </div>
           </div>
         </section>
@@ -152,9 +173,10 @@
               <span><kbd>Shift</kbd> Precision Slow</span>
               <span><kbd>M</kbd> Mute &nbsp;·&nbsp; <kbd>C</kbd> CRT Mode</span>
             </div>
-            <div class="cta-row">
+            <div class="cta-row cta-wrap">
               <button id="btn-resume" class="btn-primary">RESUME</button>
               <button id="btn-restart-pause" class="btn-secondary">RESTART</button>
+              <button id="btn-end-run" class="btn-secondary">END THIS RUN</button>
             </div>
           </div>
         </section>
@@ -194,27 +216,44 @@
 
         <!-- GAME OVER OVERLAY -->
         <section id="overlay-gameover" class="overlay hidden">
-          <div class="overlay-card compact-card">
+          <div class="overlay-card scores-card">
             <div id="gameover-badge" class="overlay-eyebrow">SIGNAL LOST</div>
-            <h2 class="overlay-heading crimson-text">GAME OVER</h2>
-            <div class="summary-stats">
-              <div class="summary-row">
-                <span>Final Score</span>
+            <h2 class="overlay-heading crimson-text go-heading">GAME OVER</h2>
+
+            <div class="go-summary-strip">
+              <div class="go-stat">
+                <span class="stat-label">FINAL SCORE</span>
                 <strong id="go-score" class="c-gold">0</strong>
               </div>
-              <div class="summary-row">
-                <span>High Score</span>
-                <strong id="go-high" class="c-cyan">0</strong>
-              </div>
-              <div class="summary-row">
-                <span>Realm Reached</span>
+              <div class="go-stat-sep"></div>
+              <div class="go-stat">
+                <span class="stat-label">REALM REACHED</span>
                 <strong id="go-level">LVL 01</strong>
               </div>
             </div>
-            <div class="cta-row">
+
+            <p id="go-status-line" class="go-status-line"></p>
+
+            <div id="go-initials-wrap" class="go-initials-wrap hidden">
+              <label for="go-initials" class="initials-label">INITIALS</label>
+              <input id="go-initials" class="initials-input" type="text" maxlength="3" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="---" aria-label="Your initials (up to 3 letters or digits)" />
+            </div>
+
+            <div id="go-tabs" class="score-tabs" role="tablist" aria-label="Score list">
+              <button type="button" class="score-tab-btn active" role="tab" aria-selected="true" data-score-tab="device">This device</button>
+              <button type="button" class="score-tab-btn" role="tab" aria-selected="false" data-score-tab="shared">Everyone</button>
+            </div>
+            <div id="go-list" class="scores-list" role="list"></div>
+            <p id="go-shared-msg" class="scores-msg hidden" aria-live="polite"></p>
+
+            <div class="cta-row cta-wrap">
               <button id="btn-retry" class="btn-primary">
                 <span>PLAY AGAIN</span>
                 <kbd class="btn-kbd">SPACE</kbd>
+              </button>
+              <button id="btn-go-title" class="btn-secondary">
+                <span>TITLE SCREEN</span>
+                <kbd class="btn-kbd">ESC</kbd>
               </button>
             </div>
           </div>
@@ -242,6 +281,7 @@
   <!-- Scripts loaded in clean dependency order (works both via file:// and HTTP) -->
   <script defer src="src/themes.js"></script>
   <script defer src="src/audio.js"></script>
+  <script defer src="src/scores.js"></script>
   <script defer src="src/grid.js"></script>
   <script defer src="src/entities.js"></script>
   <script defer src="src/renderer.js"></script>
