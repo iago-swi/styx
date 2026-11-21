@@ -15,6 +15,13 @@
   document.addEventListener('DOMContentLoaded', () => {
     const Scores = STYX.Scores;
 
+    // Show declared <meta name="version"> on the title screen
+    const versionMeta = document.querySelector('meta[name="version"]');
+    const titleVersionEl = document.getElementById('title-version');
+    if (versionMeta && titleVersionEl && versionMeta.content) {
+      titleVersionEl.textContent = 'Version ' + versionMeta.content.trim();
+    }
+
     const ui = {
       stageFrame: document.getElementById('stage-frame'),
       glCanvas: document.getElementById('gl-canvas'),

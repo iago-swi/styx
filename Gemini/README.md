@@ -4,7 +4,9 @@ A modern territory-capture arcade game built with Gemini (Google), inspired by W
 
 All WebGL 2 shaders, procedural crystal artworks, dual-scale HDR bloom, and Web Audio synthesizer sounds run locally in the browser with zero external libraries, images, fonts, or audio files.
 
-**[Play it in your browser](https://iago-swi.github.io/styx/Gemini/)**
+**[Play it in your browser](https://iago-swi.github.io/styx/Gemini/)** · [Release notes (CHANGELOG.md)](CHANGELOG.md)
+
+The current version number is shown at the bottom of the title screen (declared in `index.html` as `<meta name="version">`).
 
 ![Neon Abyss gameplay: cyan, magenta, and solar gold hexagonal crystal panels framing a warped nebula grid where the iridescent Styx swirls near an active carving tether](screenshot.jpg)
 
@@ -50,6 +52,7 @@ Gemini/
 |-- index.html          # Semantic arcade HUD, overlays, high-score views, and layered canvases
 |-- styles.css          # Frosted-glass neon UI, scoreboard layout, and responsive 16:10 framing
 |-- screenshot.jpg      # 800x500 gameplay preview
+|-- CHANGELOG.md        # Release history (published automatically from gemini-vX.Y.Z tags)
 |-- README.md
 |-- src/
 |   |-- themes.js       # 5 visual realms, shader palettes, pattern IDs, and musical scales
