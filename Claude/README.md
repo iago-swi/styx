@@ -5,7 +5,8 @@ Qix but with its own theme: you are a diamond glass-cutter, and every region you
 becomes a pane of backlit stained glass. A finished level is a glowing window.
 
 The whole game is one file, `index.html`. Graphics and sound are generated in the
-browser (WebGL 2 and Web Audio); there are no image or audio files.
+browser (WebGL 2 and Web Audio); there are no image or audio files. The ten best
+scores are kept on your device, and a second list is shared between all players.
 
 **[Play it in your browser](https://iago-swi.github.io/styx/Claude/)**
 
@@ -16,7 +17,8 @@ browser (WebGL 2 and Web Audio); there are no image or audio files.
 Play online with the link above, or download the folder and open `index.html` in a
 current version of Chrome, Edge or Firefox. No installation,
 build step or web server is needed. The two typefaces load from Google Fonts; without
-an internet connection the game falls back to system fonts.
+an internet connection the game falls back to system fonts and keeps its high scores
+on the device only.
 
 ## How to play
 

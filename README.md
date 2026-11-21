@@ -14,6 +14,8 @@ To play offline, download or clone this repository and open `index.html` in your
 
 ## Claude version
 
+In **Vitrail**, you are a diamond glass-cutter. Cut across the dark and seal a region before the drifting Wisp touches your open line, and it lights up as a pane of stained glass. Light 75% of a window to finish it, and see how many windows your three diamonds last. Finished games can enter the high-score list on the device and the one shared between players. [Play Vitrail](https://iago-swi.github.io/styx/Claude/) · [Controls and technical notes](Claude/README.md)
+
 ![Vitrail gameplay: sealed panes of stained glass around a dark area where the Wisp drifts](Claude/screenshot.jpg)
 
 ## ChatGPT version
