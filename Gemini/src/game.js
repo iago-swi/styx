@@ -9,8 +9,6 @@
 
   const STYX = (global.STYX = global.STYX || {});
 
-  const STORAGE_KEY_HI = 'styx_neon_abyss_highscore_v1';
-
   const MULT_STAGES = [
     { value: 1, name: 'PRISM', duration: 5.5, cssClass: 'mult-1', color: '#2cf6ff' },
     { value: 5, name: 'PLASMA', duration: 3.6, cssClass: 'mult-5', color: '#ff36c8' },
@@ -37,12 +35,13 @@
 
       this.score = 0;
       this.displayScore = 0;
-      this.highScore = this._loadHighScore();
+      this.highScore = STYX.Scores ? STYX.Scores.getDeviceBest() : 0;
       this.nextExtraLifeScore = 50000;
       this.lives = 3;
       this.maxLives = 5;
       this.crushedThisLevel = 0;
       this.splitAwarded = false;
+      this.onGameOver = null;
 
       // Multiplier cycle state
       this.multIdx = 0;
@@ -67,21 +66,27 @@
       this._updateStatusBadge();
     }
 
-    _loadHighScore() {
-      try {
-        const val = parseInt(global.localStorage.getItem(STORAGE_KEY_HI) || '0', 10);
-        return Number.isFinite(val) ? val : 0;
-      } catch (e) {
-        return 0;
-      }
+    syncBestScore() {
+      const deviceBest = STYX.Scores ? STYX.Scores.getDeviceBest() : this.highScore;
+      this.highScore = Math.max(deviceBest, this.mode === 'PLAYING' ? this.score : 0);
+      this.ui.hudHigh.textContent = String(this.highScore).padStart(6, '0');
     }
 
-    _saveHighScore(val) {
-      try {
-        global.localStorage.setItem(STORAGE_KEY_HI, String(val));
-      } catch (e) {
-        // Ignore storage errors
-      }
+    returnToTitle() {
+      if (STYX.Scores) STYX.Scores.cancelPendingSharedRequests();
+      this.keys.clear();
+      this.score = 0;
+      this.displayScore = 0;
+      this.level = 1;
+      this.lives = 3;
+      this.mode = 'TITLE';
+      this.ui.toast.classList.add('hidden');
+      this.toastTimer = 0;
+      this._setupAttractScene();
+      this._hideAllOverlays();
+      this.ui.overlayTitle.classList.remove('hidden');
+      this.syncBestScore();
+      this._syncHUD(true);
     }
 
     _updateStatusBadge() {
@@ -207,6 +212,7 @@
 
     _hideAllOverlays() {
       this.ui.overlayTitle.classList.add('hidden');
+      if (this.ui.overlayHighScores) this.ui.overlayHighScores.classList.add('hidden');
       this.ui.overlayPause.classList.add('hidden');
       this.ui.overlayClear.classList.add('hidden');
       this.ui.overlayGameOver.classList.add('hidden');
@@ -236,7 +242,6 @@
       this.score += points;
       if (this.score > this.highScore) {
         this.highScore = this.score;
-        this._saveHighScore(this.highScore);
       }
       // Extra life milestone
       if (this.score >= this.nextExtraLifeScore) {
@@ -508,13 +513,19 @@
 
       if (this.lives <= 0) {
         this.mode = 'GAME_OVER';
-        this.ui.goScore.textContent = this.score.toLocaleString();
-        this.ui.goHigh.textContent = this.highScore.toLocaleString();
-        this.ui.goLevel.textContent = `LVL ${String(this.level).padStart(2, '0')} · ${this.theme.name}`;
-        this.ui.goBadge.textContent = (this.score >= this.highScore && this.score > 0)
-          ? '★ NEW HIGH SCORE ★'
-          : 'SIGNAL LOST';
-        this.ui.overlayGameOver.classList.remove('hidden');
+        this.displayScore = this.score;
+        this._syncHUD(false);
+        if (typeof this.onGameOver === 'function') {
+          this.onGameOver({
+            score: this.score,
+            level: this.level,
+            themeName: this.theme.name
+          });
+        } else {
+          this.ui.goScore.textContent = this.score.toLocaleString();
+          this.ui.goLevel.textContent = `LVL ${String(this.level).padStart(2, '0')} · ${this.theme.name}`;
+          this.ui.overlayGameOver.classList.remove('hidden');
+        }
       } else {
         // Respawn cleanly on safe border with protective shield
         this.player.alive = true;
