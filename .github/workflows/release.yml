@@ -1,5 +1,5 @@
 # Publishes a GitHub release for a version tag, using the matching section of the
-# changelog as release notes. See RELEASING.md.
+# changelog as release notes. See VERSIONING.md.
 #
 #   claude-v1.2.0  ->  Claude/CHANGELOG.md, section "## [1.2.0]"
 #   v1.2.0         ->  CHANGELOG.md at the repository root

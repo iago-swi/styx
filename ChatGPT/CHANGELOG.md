@@ -1,6 +1,6 @@
 # Vector Arcade changelog
 
-Changes to Vector Arcade, the ChatGPT version of Styx, newest first. Each version is tagged `chatgpt-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [RELEASING.md](../RELEASING.md).
+Changes to Vector Arcade, the ChatGPT version of Styx, newest first. Each version is tagged `chatgpt-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
 ## [1.1.0] - 2026-11-21
 

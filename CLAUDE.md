@@ -1,3 +1,3 @@
-Read and follow [AGENTS.md](AGENTS.md) and [RELEASING.md](RELEASING.md) in this folder.
+Read and follow [AGENTS.md](AGENTS.md) and [VERSIONING.md](VERSIONING.md) in this folder.
 
 @AGENTS.md

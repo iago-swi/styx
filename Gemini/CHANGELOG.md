@@ -1,6 +1,6 @@
 # Neon Abyss changelog
 
-Changes to Neon Abyss, the Gemini version of Styx, newest first. Each version is tagged `gemini-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [RELEASING.md](../RELEASING.md).
+Changes to Neon Abyss, the Gemini version of Styx, newest first. Each version is tagged `gemini-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
 ## [1.1.0] - 2026-11-21
 

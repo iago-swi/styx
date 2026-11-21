@@ -1143,7 +1143,7 @@ $('btnStart').addEventListener('click', startGame); $('btnAgain').addEventListen
 $('btnScores').addEventListener('click', openScores); $('btnBack').addEventListener('click', closeScores);
 $('btnTitle').addEventListener('click', toTitle); $('btnEnd').addEventListener('click', endRun);
 for (const b of document.querySelectorAll('.tabs button')) b.addEventListener('click', () => setView(b.dataset.list));
-$('ver').textContent = 'Version ' + document.querySelector('meta[name="version"]').content;   // the one place the number is written: see RELEASING.md
+$('ver').textContent = 'Version ' + document.querySelector('meta[name="version"]').content;   // the one place the number is written: see VERSIONING.md
 document.body.classList.toggle('shared', !!SHARED); setView(view); $('tBest').textContent = best > 0 ? fmt(best) : '';
 $('initials').addEventListener('input', e => {
   if (e.isComposing) return;

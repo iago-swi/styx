@@ -12,9 +12,10 @@ Published releases: <https://github.com/iago-swi/styx/releases>
 
 ## Rules
 
-1. Every change inside a game's folder gets an entry in that folder's `CHANGELOG.md` and a new version. A change is finished when its release is published.
+1. Every change to a game that a player can notice gets a new version, with a section in that folder's `CHANGELOG.md`. The change is finished when its release is published. Several changes pushed together are one version, numbered by the largest of them.
+   Documentation-only changes (a README, a screenshot) get no version. They are committed as usual and can be listed under `Documentation` in the next version's notes.
 2. The version is `X.Y.Z`:
-   - `Z` goes up for a bug fix, tuning, wording, visual polish or a documentation-only change.
+   - `Z` goes up when something is fixed or adjusted and nothing new is added: a bug fix, tuning, wording, visual polish.
    - `Y` goes up when the player gets something new: a feature, a screen, a control, a level. `Z` returns to 0.
    - `X` goes up for a rebuild, or a change that makes earlier scores or saved data invalid. `Y` and `Z` return to 0.
 3. The tag is the folder name in lower case, `-v`, and the version: `claude-v1.2.0`.

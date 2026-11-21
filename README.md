@@ -40,7 +40,7 @@ The original depended on IBM’s Color Graphics Adapter (CGA). In 1998, Andrew J
 
 ## Versions and release notes
 
-Each game has its own version number. Every change is recorded in the game's changelog and published as a release with the same notes: [all releases](https://github.com/iago-swi/styx/releases).
+Each game has its own version number. Every change a player can notice is recorded in the game's changelog and published as a release with the same notes: [all releases](https://github.com/iago-swi/styx/releases).
 
 | Game | Changelog | Tags |
 | --- | --- | --- |
@@ -48,7 +48,7 @@ Each game has its own version number. Every change is recorded in the game's cha
 | Vector Arcade | [ChatGPT/CHANGELOG.md](ChatGPT/CHANGELOG.md) | `chatgpt-vX.Y.Z` |
 | Neon Abyss | [Gemini/CHANGELOG.md](Gemini/CHANGELOG.md) | `gemini-vX.Y.Z` |
 
-[RELEASING.md](RELEASING.md) explains how a version is numbered and published.
+[VERSIONING.md](VERSIONING.md) explains how a version is numbered and published.
 
 ## Structure
 
@@ -60,6 +60,6 @@ styx/
 |-- .github/      # workflow that publishes a release when a version tag is pushed
 |-- index.html    # shared landing page
 |-- README.md
-|-- RELEASING.md  # how versions and release notes work
+|-- VERSIONING.md  # how versions and release notes work
 `-- AGENTS.md     # instructions for AI assistants (CLAUDE.md and GEMINI.md point to it)
 ```

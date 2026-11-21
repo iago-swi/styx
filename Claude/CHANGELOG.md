@@ -1,6 +1,6 @@
 # Vitrail changelog
 
-Changes to Vitrail, the Claude version of Styx, newest first. Each version is tagged `claude-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [RELEASING.md](../RELEASING.md).
+Changes to Vitrail, the Claude version of Styx, newest first. Each version is tagged `claude-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
 ## [1.1.1] - 2026-11-21
 
