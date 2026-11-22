@@ -2,6 +2,14 @@
 
 Changes to Vitrail, the Claude version of Styx, newest first. Each version is tagged `claude-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
+## [1.3.0] - 2026-11-22
+
+### Added
+
+- From window 4, a Wisp can be put out. A cut that parts the two Wisps lights the smaller part, and the Wisp caught in it goes out. The rest of the window is played against one Wisp; the next window starts with two again. In version 1.1.3 that Wisp slipped across the line into the rest of the dark.
+
+The pane scores like any other, and the window still needs its 78% or 80% of light.
+
 ## [1.2.1] - 2026-11-22
 
 ### Fixed
@@ -84,6 +92,7 @@ First release.
 - Keyboard controls (arrow keys or `WASD`, pause, sound, full screen) and swipe controls on touch screens.
 - Graphics and sound generated in the browser with WebGL 2 and Web Audio. The whole game is one file, `index.html`.
 
+[1.3.0]: https://github.com/iago-swi/styx/releases/tag/claude-v1.3.0
 [1.2.1]: https://github.com/iago-swi/styx/releases/tag/claude-v1.2.1
 [1.2.0]: https://github.com/iago-swi/styx/releases/tag/claude-v1.2.0
 [1.1.3]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.3

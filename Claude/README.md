@@ -53,7 +53,7 @@ soon as the way opens.
 You have three diamonds. One large pane scores more than several small panes
 covering the same area. From
 window 4 there are two Wisps. A cut between them lights the smaller part, and the Wisp
-that was there slips across to join the other.
+caught in it goes out. The rest of that window is played against one Wisp.
 
 When a game ends, "Cut again" starts the next one and "Title screen" leads back to
 the opening screen. A paused game goes on with "Pick up the cutter" or `P`, and can be
@@ -103,8 +103,8 @@ Sealing a cut works like this:
    line and becomes lead between panes.
 5. With two Wisps, the fill starts from both and counts the cells of each area. If a
    cut has parted them, only the larger area stays dark; the Wisp in the other one is
-   moved to the nearest dark cell with room around it. The dark therefore stays in one
-   piece, and every live line can still be reached.
+   removed from the game until the next window. The dark therefore stays in one piece,
+   and every live line can still be reached.
 
 Cinders that end up on a dead line are moved to the nearest live one.
 
@@ -178,7 +178,7 @@ The render resolution follows the device pixel ratio up to 2 and is capped at
 A pane that lights *g* percent of the window scores (80 *g* + 6 *g*²) × (1 + 0.25 ×
 (window − 1)), rounded to ten, so one large pane beats several small ones. Finishing a
 window adds 1000 × window, plus 500 per percentage point above the target. A cut that
-parts two Wisps scores like any other pane.
+parts two Wisps scores like any other pane; putting out a Wisp adds no points.
 
 The five colour themes (Rosace, Aube, Abysse, Braise, Givre) repeat from window 6.
 

@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vitrail">
-<meta name="version" content="1.2.1">
+<meta name="version" content="1.3.0">
 <title>Vitrail</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2305060d'/%3E%3Cpath d='M16 4l12 12-12 12L4 16z' fill='%23ffe9b8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -501,6 +501,7 @@ const sfx = {
   ignite() { tone(880, 0.09, { type: 'square', v: 0.08 }); tone(660, 0.14, { type: 'square', v: 0.08, delay: 0.1 }); hiss(0.5, { f: 900, to: 3000, v: 0.12 }); },
   dash() { hiss(0.75, { f: 300, to: 2600, q: 2.2, v: 0.14, a: 0.4, send: 0.4 }); },
   spawn() { tone(196, 0.5, { to: 392, type: 'triangle', v: 0.1, send: 0.5 }); },
+  quench() { hiss(1.1, { f: 5200, to: 240, q: 1.4, v: 0.22, send: 0.5 }); tone(620, 1.0, { to: 52, type: 'triangle', v: 0.16, send: 0.6 }); },
   clear() { [0, 2, 4, 5, 7, 9, 10].forEach((k, i) => bell(theme.root * 8 * PENTA[k], 0.13, i * 0.13, 3.2)); tone(70, 1.6, { to: 35, v: 0.5 }); },
   over() { [5, 3, 1, 0].forEach((k, i) => bell(theme.root * 4 * PENTA[k], 0.12, i * 0.3, 3)); },
   start() { bell(theme.root * 8, 0.12); bell(theme.root * 12, 0.1, 0.12); },
@@ -668,7 +669,8 @@ function closeTrail() {
     for (let dy = -1; dy <= 1 && !near; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (inb(xx, yy) && mark[yy * GW + xx] === 2) { near = true; break; } }
     if (near) pane[i] = idx;
     if (!hasVoid8(x, y)) { grid[i] = FILL; came[i] = 1; pending[i] = 1; reveal[i] = T + Math.hypot(x - px, y - py) * 0.0034; if (!pane[i]) pane[i] = idx; } }
-  for (const b of parted) slip(b);     // a Wisp whose area was lit crosses into the dark that is left
+  for (const b of parted) quench(b);   // a Wisp whose area was lit goes out
+  if (parted.length) wisps = wisps.filter(b => !parted.includes(b));
   P.mom = -1;
   linesDirty = true; const before = pct; countVoid(); const gain = pct - before;
   const pts = Math.round((gain * 80 + gain * gain * 6) * (1 + 0.25 * (level - 1)) / 10) * 10; score += pts;
@@ -677,7 +679,8 @@ function closeTrail() {
   burst(X(px), Y(py), 26, { col: '#fff', s1: 240 });
   addShock(X(px), Y(py), Math.min(1.2, 0.3 + gain / 22)); shake = Math.max(shake, Math.min(0.6, gain / 40)); chroma = Math.max(chroma, Math.min(1, gain / 25));
   if (n) { texts.push({ x: X(sx / n), y: Y(sy / n), str: '+' + fmt(pts), life: 0, max: 1.7, size: 20 + Math.min(30, gain * 1.3), col: '#fff' });
-           texts.push({ x: X(sx / n), y: Y(sy / n) + (26 + Math.min(30, gain * 1.3)) * U, str: gain.toFixed(1) + '% lit', life: 0, max: 1.7, size: 15, col }); }
+           texts.push({ x: X(sx / n), y: Y(sy / n) + (26 + Math.min(30, gain * 1.3)) * U, str: gain.toFixed(1) + '% lit', life: 0, max: 1.7, size: 15, col });
+           if (parted.length) texts.push({ x: X(sx / n), y: Y(sy / n) - (30 + Math.min(30, gain * 1.3)) * U, str: 'Wisp put out', life: 0, max: 2.2, size: 17, col: '#bff6ff' }); }
   sfx.claim(gain);
   for (const c of cinders) if (c.active && (grid[c.y * GW + c.x] !== LINE || (c.moving && grid[c.ty * GW + c.tx] !== LINE))) relocate(c, false);
   if (pct >= goal) levelClear();
@@ -711,19 +714,12 @@ function solidNear(x, y, r) {
     const s = grid[cy * GW + cx]; if (s === LINE || s === FILL) return true; }
   return false;
 }
-/* a cut has lit the area this Wisp was in: it slips across to the nearest open spot in the dark that is left */
-function slip(b) {
-  const ox = b.x, oy = b.y; let bx = -1, by = -1, bs = 1e9, fx = -1, fy = -1, fs = 1e9;
-  for (let y = 1; y < GH - 1; y++) for (let x = 1; x < GW - 1; x++) { if (grid[y * GW + x] !== VOID) continue;
-    const d = (x - ox) * (x - ox) + (y - oy) * (y - oy);
-    if (d < fs) { fs = d; fx = x; fy = y; }
-    if (d < bs && !solidNear(x, y, b.r + 1)) { bs = d; bx = x; by = y; } }
-  if (bx < 0) { bx = fx; by = fy; } if (bx < 0) return;
-  const n = Math.min(48, Math.ceil(Math.hypot(bx - ox, by - oy)));
-  for (let k = 0; k <= n; k++) burst(X(ox + (bx - ox) * k / (n || 1)), Y(oy + (by - oy) * k / (n || 1)), 2, { col: '#bff6ff', s1: 40, l1: 0.7 });
-  burst(X(ox), Y(oy), 50, { col: '#bff6ff', s1: 220, l1: 0.8 }); burst(X(bx), Y(by), 40, { col: '#bff6ff', s1: 160 }); addShock(X(bx), Y(by), 0.5);
-  b.x = bx; b.y = by; for (const t of b.tend) for (const p of t) { p.x = bx; p.y = by; }
-  b.dash = 0; b.dashAt = Math.max(b.dashAt, T + 2.5); sfx.spawn();
+/* a cut has lit the area this Wisp was in: it goes out */
+function quench(b) {
+  const x = X(b.x), y = Y(b.y);
+  burst(x, y, 160, { col: '#bff6ff', s1: 420, l1: 1.2, z: 2.4 }); burst(x, y, 50, { col: '#fff', s1: 200, l1: 0.8 });
+  for (const t of b.tend) for (let k = 2; k < t.length; k += 3) burst(X(t[k].x), Y(t[k].y), 3, { col: '#bff6ff', s1: 90, l1: 0.9 });
+  addShock(x, y, 1.1); shake = Math.max(shake, 0.5); chroma = 1; sfx.quench();
 }
 function updateWisp(b, dt) {
   if (T >= b.turnT) { b.turnT = T + rnd(0.35, 1.4); b.turn = rnd(-2.6, 2.6); b.mul = rnd(0.55, 1.45); }
