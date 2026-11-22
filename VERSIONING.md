@@ -25,7 +25,19 @@ Published releases: <https://github.com/iago-swi/styx/releases>
 
 ## Releasing a change
 
-1. Add a section at the top of the game's `CHANGELOG.md`, above the previous version:
+Every change reaches `main` through a branch and a pull request. Nobody commits or pushes directly on `main`. `main` is never force-pushed, and existing history is not rewritten.
+
+When the owner says "publish", do all the steps below. When the owner says "open a pull request", stop after step 4 and give the link.
+
+1. Bring `main` up to date and create a branch from it. Name it `release/<tag>` for a version, and `docs/<short-name>` for a change to the documentation only:
+
+   ```bash
+   git switch main
+   git pull
+   git switch -c release/claude-v1.2.0
+   ```
+
+2. Add a section at the top of the game's `CHANGELOG.md`, above the previous version:
 
    ```markdown
    ## [1.2.0] - 2026-12-03
@@ -39,21 +51,35 @@ Published releases: <https://github.com/iago-swi/styx/releases>
 
    Set the same number in the game's `<meta name="version">`, which the title screen displays.
 
-2. Commit the changelog together with the change. Then fetch, rebase and push:
+   A change to the documentation alone skips this step.
+
+3. Commit on the branch, the changelog together with the change. Commit under the owner's Git identity, with a plain message and no attribution lines (no `Co-Authored-By`, no "Generated with").
+
+4. Push the branch and open a pull request. The title is the version number and a few words. The body is the changelog section for this version, in plain language for users. For a change to the documentation alone, the body says what changed.
 
    ```bash
-   git pull --rebase
-   git push
+   git push -u origin release/claude-v1.2.0
+   gh pr create --title "Vitrail 1.2.0: touch buttons" --body-file notes.md
    ```
 
-3. Tag the commit that contains the changelog entry, and push the tag on its own:
+5. Merge the pull request with a merge commit, not a squash and not a rebase:
 
    ```bash
+   gh pr merge --merge --delete-branch
+   ```
+
+6. Tag the merge commit on `main`, and push the tag on its own:
+
+   ```bash
+   git switch main
+   git pull
    git tag -a claude-v1.2.0 -m "Vitrail 1.2.0"
    git push origin claude-v1.2.0
    ```
 
-4. Pushing the tag starts the [Release workflow](.github/workflows/release.yml). It reads the section for that version from the changelog and publishes it as a GitHub release titled with the game's name and version. Check the result:
+   A change to the documentation alone gets no version, no tag and no release: it ends at step 5.
+
+7. Pushing the tag starts the [Release workflow](.github/workflows/release.yml). It reads the section for that version from the changelog and publishes it as a GitHub release titled with the game's name and version. Check the result:
 
    ```bash
    gh release view claude-v1.2.0
@@ -61,7 +87,7 @@ Published releases: <https://github.com/iago-swi/styx/releases>
 
 ## Correcting a release note
 
-Edit the changelog and push it. Then run the workflow again for the existing tag, which replaces the published notes:
+Edit the changelog and publish the edit as a change to the documentation (branch `docs/<short-name>`, pull request, merge). Then run the workflow again for the existing tag, which replaces the published notes:
 
 ```bash
 gh workflow run release.yml -f tag=claude-v1.2.0
