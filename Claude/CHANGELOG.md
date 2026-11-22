@@ -2,6 +2,17 @@
 
 Changes to Vitrail, the Claude version of Styx, newest first. Each version is tagged `claude-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
+## [1.1.3] - 2026-11-22
+
+### Fixed
+
+- From window 4, a cut between the two Wisps could leave a window impossible to finish. In version 1.1.2 such a cut lit nothing and split the dark into two areas with no glowing line between them, so the diamond could not reach the other area. A cut between the Wisps now lights the smaller part, and the Wisp that was there slips across into the rest. Every sealed shape lights up again, and the dark stays in one piece.
+
+### Changed
+
+- Following the lines is easier. A turn can be pressed before the corner: the diamond runs on and turns when it gets there, also with a single key or a swipe. Before, it stopped when the turn was not open yet.
+- Near a corner, a turn pressed up to five steps early follows the line and no longer starts a cut (three steps before).
+
 ## [1.1.2] - 2026-11-21
 
 ### Fixed
@@ -46,6 +57,7 @@ First release.
 - Keyboard controls (arrow keys or `WASD`, pause, sound, full screen) and swipe controls on touch screens.
 - Graphics and sound generated in the browser with WebGL 2 and Web Audio. The whole game is one file, `index.html`.
 
+[1.1.3]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.3
 [1.1.2]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.2
 [1.1.1]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.1
 [1.1.0]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.0

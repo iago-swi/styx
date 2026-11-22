@@ -37,6 +37,9 @@ Light 75% of the window to finish it (78% from window 3, 80% from window 5).
 
 On a touch screen, swipe to steer and tap to stop.
 
+A turn can be pressed before the corner: on a line, the diamond runs on and turns as
+soon as the way opens.
+
 | Danger | What it does |
 | --- | --- |
 | The Wisp | Drifts in the dark and dashes now and then. If it or its tendrils touch an unfinished cut, you lose a diamond. |
@@ -45,8 +48,8 @@ On a touch screen, swipe to steer and tap to stop.
 
 You have three diamonds. One large pane scores more than several small panes
 covering the same area. From
-window 4 there are two Wisps. A cut between them keeps each on its own side, and the
-window still needs its full share of light.
+window 4 there are two Wisps. A cut between them lights the smaller part, and the Wisp
+that was there slips across to join the other.
 
 When a game ends, "Cut again" starts the next one and "Title screen" leads back to
 the opening screen. A paused game can be given up with "End this run": it ends like
@@ -67,7 +70,7 @@ nothing else about you.
 
 | | |
 | --- | --- |
-| Delivery | One `index.html` of about 1,190 lines (79 KB): markup, CSS, JavaScript and GLSL together. No dependencies, no build step. |
+| Delivery | One `index.html` of about 1,210 lines (82 KB): markup, CSS, JavaScript and GLSL together. No dependencies, no build step. |
 | Language | Plain JavaScript in a single closure, no framework. |
 | Rendering | WebGL 2 (GLSL ES 3.00) for the scene and post-processing, Canvas 2D for lines, creatures and sparks, HTML and CSS for the score bar and screens. |
 | Sound | Web Audio API. Every sound is synthesised; there are no audio files. |
@@ -94,8 +97,10 @@ Sealing a cut works like this:
 3. Every dark cell the fill did not reach becomes glass and gets the next pane colour.
 4. Every line cell with no dark cell among its eight neighbours stops being a live
    line and becomes lead between panes.
-5. With two Wisps, the fill starts from both. A cut that parts them lights nothing:
-   both sides stay dark, each with its Wisp.
+5. With two Wisps, the fill starts from both and counts the cells of each area. If a
+   cut has parted them, only the larger area stays dark; the Wisp in the other one is
+   moved to the nearest dark cell with room around it. The dark therefore stays in one
+   piece, and every live line can still be reached.
 
 Cinders that end up on a dead line are moved to the nearest live one.
 
@@ -137,8 +142,11 @@ The render resolution follows the device pixel ratio up to 2 and is capped at
 
 - **Cutter.** 22 lattice steps per second. Movement consumes a distance budget per
   frame, so the speed does not depend on the frame rate. The most recently pressed
-  direction wins. A corner assist looks up to three steps ahead: pressing a turn
-  slightly early follows the line round its corner rather than starting a cut.
+  direction that can move wins. On a line, a turn pressed early is kept. If the key
+  points at glass, the cutter runs on the way it was going and turns when the way
+  opens. If it points at the dark and the line itself turns that way within five
+  steps, the cutter follows the line and starts no cut. The direction is remembered
+  for 0.2 s after a stop, which bridges the gap between two key presses.
 - **Wisp.** A wandering heading with random turn rate and speed, bounced off lines and
   glass by a circle-against-grid test, in sub-steps of at most 0.45 cells. A dash has
   three phases: a 0.6 s warning, 0.5 to 0.85 s at 2.3 times base speed, then 3.5 to
@@ -165,8 +173,8 @@ The render resolution follows the device pixel ratio up to 2 and is capped at
 
 A pane that lights *g* percent of the window scores (80 *g* + 6 *g*²) × (1 + 0.25 ×
 (window − 1)), rounded to ten, so one large pane beats several small ones. Finishing a
-window adds 1000 × window, plus 500 per percentage point above the target. Parting two
-Wisps pays nothing.
+window adds 1000 × window, plus 500 per percentage point above the target. A cut that
+parts two Wisps scores like any other pane.
 
 The five colour themes (Rosace, Aube, Abysse, Braise, Givre) repeat from window 6.
 
@@ -240,5 +248,8 @@ unreachable service; the rate limit was not exercised. The deployed service was 
 checked with the same requests and with one complete game sent from the game itself;
 the test entries were removed afterwards. "Title screen", "End this run" (with and
 without a score, also during an open cut) and `Esc` after a game were checked with
-scripted runs and real clicks. None of this has been tried on a real touch screen,
+scripted runs and real clicks. The rule for two Wisps and the early turns were checked
+with scripted runs on a board with two motionless Wisps (a cut between them, a pocket
+around one, turns pressed early towards glass and towards the dark, the 0.2 s after a
+stop); they were not judged by hand for feel. None of this has been tried on a real touch screen,
 and sound was not checked by ear.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="version" content="1.1.2">
+<meta name="version" content="1.1.3">
 <title>Vitrail</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2305060d'/%3E%3Cpath d='M16 4l12 12-12 12L4 16z' fill='%23ffe9b8'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -267,7 +267,7 @@ let theme = THEMES[0], linePath = new Path2D(), linesDirty = true;
 let wisps = [], cinders = [], parts = [], texts = [], shocks = [];
 let fuse = null, shake = 0, chroma = 0, fade = 0, fadeTarget = 1, pulse = 0, trans = null, stateUntil = 0, nextBell = 2, nextFire = 0;
 const P = { x: NX, y: GH - 1, fx: 0, fy: 0, tx: 0, ty: 0, prog: 0, moving: false, dir: 0, drawing: false, closing: false,
-            trail: [], inv: 0, rx: NX, ry: GH - 1, speed: 22, hidden: true };
+            trail: [], inv: 0, rx: NX, ry: GH - 1, speed: 22, hidden: true, mom: -1, momT: 0 };
 const held = [];
 const prefs = { get(k) { try { return localStorage.getItem('vitrail.' + k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem('vitrail.' + k, v); } catch (e) {} } };
 best = +prefs.get('best') || 0;
@@ -448,15 +448,16 @@ function hasVoid8(x, y) {
     for (let dx = -1; dx <= 1; dx++) { const xx = x + dx; if (xx < 0 || xx >= GW) continue; const s = grid[yy * GW + xx]; if (s === VOID || s === TRAIL) return true; } }
   return false;
 }
-function flood(sx, sy) {
-  const s = sy * GW + sx; if (grid[s] !== VOID || mark[s]) return; let sp = 0; mark[s] = 1; stack[sp++] = s;
+function flood(s, v) {               // marks the dark area around cell s with v and returns its size
+  if (s < 0 || grid[s] !== VOID || mark[s]) return 0; let sp = 0, n = 1; mark[s] = v; stack[sp++] = s;
   while (sp) {
     const i = stack[--sp], x = i % GW; let j;
-    if (x > 0)        { j = i - 1;  if (!mark[j] && grid[j] === VOID) { mark[j] = 1; stack[sp++] = j; } }
-    if (x < GW - 1)   { j = i + 1;  if (!mark[j] && grid[j] === VOID) { mark[j] = 1; stack[sp++] = j; } }
-    if (i >= GW)      { j = i - GW; if (!mark[j] && grid[j] === VOID) { mark[j] = 1; stack[sp++] = j; } }
-    if (i < NC - GW)  { j = i + GW; if (!mark[j] && grid[j] === VOID) { mark[j] = 1; stack[sp++] = j; } }
+    if (x > 0)        { j = i - 1;  if (!mark[j] && grid[j] === VOID) { mark[j] = v; n++; stack[sp++] = j; } }
+    if (x < GW - 1)   { j = i + 1;  if (!mark[j] && grid[j] === VOID) { mark[j] = v; n++; stack[sp++] = j; } }
+    if (i >= GW)      { j = i - GW; if (!mark[j] && grid[j] === VOID) { mark[j] = v; n++; stack[sp++] = j; } }
+    if (i < NC - GW)  { j = i + GW; if (!mark[j] && grid[j] === VOID) { mark[j] = v; n++; stack[sp++] = j; } }
   }
+  return n;
 }
 function voidNear(bx, by) {
   const x = Math.round(bx), y = Math.round(by); if (inb(x, y) && grid[y * GW + x] === VOID) return [x, y];
@@ -506,7 +507,7 @@ function initLevel(n, demo) {
     stamp(70, 26, 96, 44, 1); stamp(84, 44, 96, 60, 2); stamp(58, 50, 84, 60, 3); stamp(0, 12, 9, 24, 5); stamp(88, 9, 96, 26, 2);
   }
   normalise(); linesDirty = true; countVoid();
-  Object.assign(P, { x: NX, y: GH - 1, rx: NX, ry: GH - 1, moving: false, drawing: false, closing: false, prog: 0, trail: [], inv: T + 1.5, hidden: !!demo });
+  Object.assign(P, { x: NX, y: GH - 1, rx: NX, ry: GH - 1, moving: false, drawing: false, closing: false, prog: 0, trail: [], inv: T + 1.5, hidden: !!demo, mom: -1, momT: 0 });
   fuse = null; parts.length = 0; texts.length = 0;
   wisps = []; const nb = n >= 4 ? 2 : 1;
   for (let i = 0; i < nb; i++) wisps.push(makeWisp(GW * (nb === 1 ? (demo ? 0.46 : 0.5) : (i ? 0.68 : 0.32)), GH * (demo ? 0.5 : 0.42), n, i));
@@ -537,25 +538,29 @@ function stepType(d) {           // 0 blocked, 1 walk the line, 2 cut into the d
   if (m === VOID && t === LINE) return 3;
   return 0;
 }
-/* corner assist: holding "along" and pressing "turn" a touch early shouldn't launch a cut if the line itself turns just ahead */
+/* corner assist: running "along" and pressing "turn" a little early shouldn't launch a cut if the line itself turns just ahead */
 function turnAhead(o, d) {
   let x = P.x, y = P.y;
-  for (let k = 0; k < 3; k++) { if (!edge(x, y, o)) return false; x += 2 * DX[o]; y += 2 * DY[o]; if (edge(x, y, d)) return true; }
+  for (let k = 0; k < 5; k++) { if (!edge(x, y, o)) return false; x += 2 * DX[o]; y += 2 * DY[o]; if (edge(x, y, d)) return true; }
   return false;
 }
+/* The newest key that can move wins. P.mom is the way the cutter last ran along a line: a turn pressed early is kept,
+   and the cutter runs on that way until the turn opens. It lasts 0.2 s after a stop, to bridge the gap between two keys. */
 function pickDir() {
+  const mom = !P.drawing && P.mom >= 0 && T <= P.momT && stepType(P.mom) === 1 ? P.mom : -1;
   for (let i = held.length - 1; i >= 0; i--) {
     const d = held[i], ty = stepType(d); if (!ty) continue;
-    if (ty >= 2 && !P.drawing) { let skip = false;
-      for (let j = i - 1; j >= 0; j--) if (stepType(held[j]) === 1 && turnAhead(held[j], d)) { skip = true; break; }
+    if (ty >= 2 && !P.drawing) { let skip = mom >= 0 && turnAhead(mom, d);
+      for (let j = i - 1; j >= 0 && !skip; j--) if (stepType(held[j]) === 1 && turnAhead(held[j], d)) skip = true;
       if (skip) continue; }
     return d;
   }
-  return -1;
+  return held.length ? mom : -1;
 }
 function beginStep(d) {
   const ty = stepType(d), mx = P.x + DX[d], my = P.y + DY[d], tx = P.x + 2 * DX[d], tY = P.y + 2 * DY[d];
   P.fx = P.x; P.fy = P.y; P.tx = tx; P.ty = tY; P.prog = 0; P.moving = true; P.dir = d;
+  if (ty === 1) { P.mom = d; P.momT = Infinity; }
   if (ty >= 2) {
     if (!P.drawing) { P.drawing = true; P.trail = [{ x: P.x, y: P.y }]; sfx.cut(); }
     grid[my * GW + mx] = TRAIL; if (ty === 2) grid[tY * GW + tx] = TRAIL; P.closing = ty === 3;
@@ -566,7 +571,8 @@ function updatePlayer(dt) {
   while (budget > 0 && state === 'playing') {
     if (!P.moving) {
       const d = pickDir();
-      if (d < 0) { if (P.drawing && !stepType(0) && !stepType(1) && !stepType(2) && !stepType(3)) kill(); break; }
+      if (d < 0) { if (P.drawing && !stepType(0) && !stepType(1) && !stepType(2) && !stepType(3)) kill();
+                   if (P.momT === Infinity) P.momT = T + 0.2; break; }
       beginStep(d);
     }
     const need = 1 - P.prog;
@@ -581,8 +587,12 @@ function closeTrail() {
   const px = P.x, py = P.y, trail = P.trail;
   P.drawing = false; P.closing = false; fuse = null;
   for (let i = 0; i < NC; i++) if (grid[i] === TRAIL) { grid[i] = LINE; heat[i] = 1; }
-  mark.fill(0);                        // every area that holds a Wisp stays dark, also when a cut parts two Wisps
-  wisps.forEach(b => { const c = voidNear(b.x, b.y); if (c) flood(c[0], c[1]); });
+  mark.fill(0);                        // the dark stays in one piece: of the areas that hold a Wisp, only the largest stays dark
+  const home = wisps.map(b => { const c = voidNear(b.x, b.y); return c ? c[1] * GW + c[0] : -1; });
+  let keep = 0, most = 0;
+  home.forEach((h, i) => { const n = flood(h, 3 + i); if (n > most) { most = n; keep = 3 + i; } });
+  const parted = wisps.filter((b, i) => home[i] < 0 || mark[home[i]] !== keep);
+  for (let i = 0; i < NC; i++) mark[i] = keep && mark[i] === keep ? 1 : 0;
   paneSeq = paneSeq % 5 + 1; const idx = paneSeq;
   let n = 0, sx = 0, sy = 0;
   for (let y = 1; y < GH - 1; y++) for (let x = 1; x < GW - 1; x++) { const i = y * GW + x;
@@ -592,6 +602,8 @@ function closeTrail() {
     for (let dy = -1; dy <= 1 && !near; dy++) for (let dx = -1; dx <= 1; dx++) { const xx = x + dx, yy = y + dy; if (inb(xx, yy) && mark[yy * GW + xx] === 2) { near = true; break; } }
     if (near) pane[i] = idx;
     if (!hasVoid8(x, y)) { grid[i] = FILL; came[i] = 1; pending[i] = 1; reveal[i] = T + Math.hypot(x - px, y - py) * 0.0034; if (!pane[i]) pane[i] = idx; } }
+  for (const b of parted) slip(b);     // a Wisp whose area was lit crosses into the dark that is left
+  P.mom = -1;
   linesDirty = true; const before = pct; countVoid(); const gain = pct - before;
   const pts = Math.round((gain * 80 + gain * gain * 6) * (1 + 0.25 * (level - 1)) / 10) * 10; score += pts;
   const col = theme.panes[idx - 1];
@@ -615,7 +627,7 @@ function kill() {
     for (let i = 0; i < NC; i++) if (grid[i] === TRAIL) grid[i] = VOID;
     P.x = P.trail[0].x; P.y = P.trail[0].y;
   }
-  Object.assign(P, { drawing: false, moving: false, closing: false, prog: 0, trail: [], hidden: true }); fuse = null; hud();
+  Object.assign(P, { drawing: false, moving: false, closing: false, prog: 0, trail: [], hidden: true, mom: -1 }); fuse = null; hud();
 }
 function respawn() {
   state = 'playing'; P.hidden = false; P.rx = P.x; P.ry = P.y; P.inv = T + 2.4;
@@ -632,6 +644,20 @@ function solidNear(x, y, r) {
     if ((cx - x) * (cx - x) + (cy - y) * (cy - y) > r2) continue; if (!inb(cx, cy)) return true;
     const s = grid[cy * GW + cx]; if (s === LINE || s === FILL) return true; }
   return false;
+}
+/* a cut has lit the area this Wisp was in: it slips across to the nearest open spot in the dark that is left */
+function slip(b) {
+  const ox = b.x, oy = b.y; let bx = -1, by = -1, bs = 1e9, fx = -1, fy = -1, fs = 1e9;
+  for (let y = 1; y < GH - 1; y++) for (let x = 1; x < GW - 1; x++) { if (grid[y * GW + x] !== VOID) continue;
+    const d = (x - ox) * (x - ox) + (y - oy) * (y - oy);
+    if (d < fs) { fs = d; fx = x; fy = y; }
+    if (d < bs && !solidNear(x, y, b.r + 1)) { bs = d; bx = x; by = y; } }
+  if (bx < 0) { bx = fx; by = fy; } if (bx < 0) return;
+  const n = Math.min(48, Math.ceil(Math.hypot(bx - ox, by - oy)));
+  for (let k = 0; k <= n; k++) burst(X(ox + (bx - ox) * k / (n || 1)), Y(oy + (by - oy) * k / (n || 1)), 2, { col: '#bff6ff', s1: 40, l1: 0.7 });
+  burst(X(ox), Y(oy), 50, { col: '#bff6ff', s1: 220, l1: 0.8 }); burst(X(bx), Y(by), 40, { col: '#bff6ff', s1: 160 }); addShock(X(bx), Y(by), 0.5);
+  b.x = bx; b.y = by; for (const t of b.tend) for (const p of t) { p.x = bx; p.y = by; }
+  b.dash = 0; b.dashAt = Math.max(b.dashAt, T + 2.5); sfx.spawn();
 }
 function updateWisp(b, dt) {
   if (T >= b.turnT) { b.turnT = T + rnd(0.35, 1.4); b.turn = rnd(-2.6, 2.6); b.mul = rnd(0.55, 1.45); }
