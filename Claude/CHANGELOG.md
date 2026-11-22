@@ -2,6 +2,16 @@
 
 Changes to Vitrail, the Claude version of Styx, newest first. Each version is tagged `claude-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
+## [1.2.1] - 2026-11-22
+
+### Fixed
+
+- The title screen on a phone. The text lay on top of the stained-glass window and was hard to read. On an upright phone the window is now on top with the text under it; on a phone held sideways the window is in the middle with the text on both sides.
+
+### Changed
+
+- On a touch screen the title screen names swipes and taps only, not the keys.
+
 ## [1.2.0] - 2026-11-22
 
 ### Added
@@ -74,6 +84,7 @@ First release.
 - Keyboard controls (arrow keys or `WASD`, pause, sound, full screen) and swipe controls on touch screens.
 - Graphics and sound generated in the browser with WebGL 2 and Web Audio. The whole game is one file, `index.html`.
 
+[1.2.1]: https://github.com/iago-swi/styx/releases/tag/claude-v1.2.1
 [1.2.0]: https://github.com/iago-swi/styx/releases/tag/claude-v1.2.0
 [1.1.3]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.3
 [1.1.2]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.2

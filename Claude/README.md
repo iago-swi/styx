@@ -74,7 +74,7 @@ nothing else about you.
 
 | | |
 | --- | --- |
-| Delivery | One `index.html` of about 1,290 lines (88 KB): markup, CSS, JavaScript and GLSL together. No dependencies, no build step. |
+| Delivery | One `index.html` of about 1,310 lines (90 KB): markup, CSS, JavaScript and GLSL together. No dependencies, no build step. |
 | Language | Plain JavaScript in a single closure, no framework. |
 | Rendering | WebGL 2 (GLSL ES 3.00) for the scene and post-processing, Canvas 2D for lines, creatures and sparks, HTML and CSS for the score bar and screens. |
 | Sound | Web Audio API. Every sound is synthesised; there are no audio files. |
@@ -239,6 +239,9 @@ An open cut sounds a tone that rises with its length.
 - Layout: the score bar sits above the window. In a window lower than 480 px and at
   least 1.5 times as wide as high (a phone held sideways), it stands in a column to
   the left, the touch buttons to the right, and the window takes the full height.
+  The title screen has its own small layouts, so that the text never covers the
+  window: on an upright phone the window is on top and the text under it, on a phone
+  held sideways the window is in the middle with the text on both sides.
 
 ### Testing
 
@@ -262,7 +265,7 @@ scripted runs and real clicks. The rule for two Wisps and the early turns were c
 with scripted runs on a board with two motionless Wisps (a cut between them, a pocket
 around one, turns pressed early towards glass and towards the dark, the 0.2 s after a
 stop); they were not judged by hand for feel. The touch buttons and the layouts were
-checked in a desktop browser's phone emulation at 400 × 760, 667 × 330 and 890 × 300,
+checked in a desktop browser's phone emulation at 360 × 640, 400 × 760, 667 × 330 and 890 × 300,
 with real clicks on the pause and resume buttons. Full screen, the landscape lock and
 the Home Screen mode need a real phone and were not tried. None of this has been tried on a real touch screen,
 and sound was not checked by ear.
