@@ -35,7 +35,11 @@ Light 75% of the window to finish it (78% from window 3, 80% from window 5).
 | `Enter` or `Space` | Start |
 | `Esc` after a game | Back to the title screen |
 
-On a touch screen, swipe to steer and tap to stop.
+On a touch screen, swipe to steer and tap to stop. Three buttons next to the window
+pause the game, switch the sound and go full screen. Hold a phone sideways: the window
+then takes the full height of the screen, with the score beside it. An iPhone does not
+let a web page go full screen, so the button is missing there; add the game to the
+Home Screen (Share, then "Add to Home Screen") to play without the browser bars.
 
 A turn can be pressed before the corner: on a line, the diamond runs on and turns as
 soon as the way opens.
@@ -52,8 +56,8 @@ window 4 there are two Wisps. A cut between them lights the smaller part, and th
 that was there slips across to join the other.
 
 When a game ends, "Cut again" starts the next one and "Title screen" leads back to
-the opening screen. A paused game can be given up with "End this run": it ends like
-any other game, and its score counts.
+the opening screen. A paused game goes on with "Pick up the cutter" or `P`, and can be
+given up with "End this run": it ends like any other game, and its score counts.
 
 The ten best scores are kept in the browser, each with three initials, the window
 reached and the date. The list is shown when a game ends and opens from the title
@@ -70,7 +74,7 @@ nothing else about you.
 
 | | |
 | --- | --- |
-| Delivery | One `index.html` of about 1,210 lines (82 KB): markup, CSS, JavaScript and GLSL together. No dependencies, no build step. |
+| Delivery | One `index.html` of about 1,290 lines (88 KB): markup, CSS, JavaScript and GLSL together. No dependencies, no build step. |
 | Language | Plain JavaScript in a single closure, no framework. |
 | Rendering | WebGL 2 (GLSL ES 3.00) for the scene and post-processing, Canvas 2D for lines, creatures and sparks, HTML and CSS for the score bar and screens. |
 | Sound | Web Audio API. Every sound is synthesised; there are no audio files. |
@@ -228,7 +232,13 @@ An open cut sounds a tone that rises with its length.
 - Every screen can be left with the keyboard: `Enter` starts or restarts, `Esc` closes
   the high-score screen or returns to the title after a game, and buttons show a
   focus ring.
-- Touch input: a swipe sets the direction, a tap stops.
+- Touch input: a swipe sets the direction, a tap stops. Where the main pointer is a
+  finger, or from the first touch, three buttons (pause, sound, full screen) appear
+  under the window and the key hints go. The full-screen button also asks the browser
+  to lock the screen to landscape, and is hidden where the Fullscreen API is missing.
+- Layout: the score bar sits above the window. In a window lower than 480 px and at
+  least 1.5 times as wide as high (a phone held sideways), it stands in a column to
+  the left, the touch buttons to the right, and the window takes the full height.
 
 ### Testing
 
@@ -251,5 +261,8 @@ without a score, also during an open cut) and `Esc` after a game were checked wi
 scripted runs and real clicks. The rule for two Wisps and the early turns were checked
 with scripted runs on a board with two motionless Wisps (a cut between them, a pocket
 around one, turns pressed early towards glass and towards the dark, the 0.2 s after a
-stop); they were not judged by hand for feel. None of this has been tried on a real touch screen,
+stop); they were not judged by hand for feel. The touch buttons and the layouts were
+checked in a desktop browser's phone emulation at 400 × 760, 667 × 330 and 890 × 300,
+with real clicks on the pause and resume buttons. Full screen, the landscape lock and
+the Home Screen mode need a real phone and were not tried. None of this has been tried on a real touch screen,
 and sound was not checked by ear.

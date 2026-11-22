@@ -2,6 +2,23 @@
 
 Changes to Vitrail, the Claude version of Styx, newest first. Each version is tagged `claude-vX.Y.Z` and published with these notes on the [releases page](https://github.com/iago-swi/styx/releases). The rules are in [VERSIONING.md](../VERSIONING.md).
 
+## [1.2.0] - 2026-11-22
+
+### Added
+
+- Touch buttons next to the window on phones and tablets: pause, sound on or off, and full screen. Full screen also turns the game to landscape where the browser allows it. An iPhone does not let a web page go full screen, so the button is missing there: add the game to the Home Screen to play without the browser bars.
+- **Pick up the cutter** on the pause screen. A paused game can be resumed with a tap or a click, not only with `P`.
+- A layout for a phone held sideways: the window takes the full height of the screen, and the score stands beside it.
+
+### Changed
+
+- On a small screen the title card is centred and fits the screen. Before, its top was cut off.
+- On a touch screen the hints under the window name swipes and taps and no longer keys.
+
+### Fixed
+
+- In a low, wide browser window the labels of the score bar ran into each other.
+
 ## [1.1.3] - 2026-11-22
 
 ### Fixed
@@ -57,6 +74,7 @@ First release.
 - Keyboard controls (arrow keys or `WASD`, pause, sound, full screen) and swipe controls on touch screens.
 - Graphics and sound generated in the browser with WebGL 2 and Web Audio. The whole game is one file, `index.html`.
 
+[1.2.0]: https://github.com/iago-swi/styx/releases/tag/claude-v1.2.0
 [1.1.3]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.3
 [1.1.2]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.2
 [1.1.1]: https://github.com/iago-swi/styx/releases/tag/claude-v1.1.1
